@@ -1,0 +1,23 @@
+---
+title: "Professional Experience"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+# Professional Experience
+
+**Biostatistics Algorithm Intern**(Jan. – Jun. 2024):
+
+Developed a diagnostic model for Alzheimer’s disease with the following key steps:
+
+1. Preprocessed a real medical dataset from 2,260 patients (e.g., handling missing values through multiple imputation). 
+
+2. Conducted statistical analyses, including significance testing, to evaluate various variables (e.g., uric acid, triglycerides, diabetes) and identified independent risk factors of Alzheimer’s disease.
+
+3. Performed additional feature selection through methods such as lasso regression and recursive feature elimination, and constructed diagnostic models based on algorithms such as logistic regression, SVM, random forest, and XGBoost.
+
+4. Evaluated the performance and stability of the models using ten-fold cross-validation, employing metrics such as sensitivity, micro-F1 score, and area under the ROC curve (AUC).
+
+5. Selected the robust multivariate logistic regression diagnostic model with an AUC of 0.83 and a sensitivity of 0.81.

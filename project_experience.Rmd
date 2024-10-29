@@ -1,0 +1,18 @@
+---
+title: "Project experience"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+# Project Experience
+
+**Segmentation of mesoscale eddies in the South China Sea based on convolutional and residual neural networks**(Sep. 2023 – May 2024):
+
+1. Preprocessed daily Sea Level Anomaly images from 2011-2022 using the Py-Eddy-Tracker algorithm, which is based on contour geometry, to generate a mesoscale eddy segmentation dataset consisting of 4383 samples.
+
+2. Constructed a convolutional and a residual neural network based on encoder-decoder architecture, performed supervised learning, and achieved pixel-wise classification on images.
+
+3. Evaluated and compared the segmentation performance of both models using metrics such as the weighted Dice Coefficient. By refining the model architecture of the ResNet, its weighted Dice Coefficient reached 84.27%.
+

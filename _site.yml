@@ -1,0 +1,20 @@
+name: "Yay internet!"
+output_dir: "."
+navbar:
+  title: "Introduction"
+  right:
+    - text: "Professional Experience"
+      href: professional_experience.html
+    - text: "Project Experience"
+      href: project_experience.html 
+    - text: "Publication"
+      href: publication.html
+    - text: "Dashboard"
+      href: dashboard.html
+    - icon: fa-envelope fa-lg
+      href: email.html
+    - icon: fa-github fa-lg
+      href: http://github.com/ZebangZHANGstat/
+output:
+  html_document:
+    theme: cerulean

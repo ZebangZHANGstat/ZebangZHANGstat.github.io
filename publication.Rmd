@@ -1,0 +1,14 @@
+---
+title: "Publication"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+# Publication
+
+**Application of ARIMA and LSTM Model to the Forecast of CSI 300 Close Price**, *the 2024 3rd International Forum on Mathematical Statistics, Physical Sciences and Telecommunication System (IFMPT 2024)*
+
+[DOI](https://doi.org/10.54097/0929np93)
+
