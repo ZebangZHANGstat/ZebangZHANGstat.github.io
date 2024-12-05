@@ -255,6 +255,8 @@ df_education <- df_education %>%
   filter(OCCUR_DATE >= as.Date("2017-01-01") & OCCUR_DATE <= as.Date("2023-12-31"))
 ```
 
+## compute incident rate
+
 ```{r}
 #add a column that shows the shooting incident rate of NTAs in that year
 df_education <- df_education %>%
