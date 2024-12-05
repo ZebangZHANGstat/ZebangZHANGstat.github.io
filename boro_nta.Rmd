@@ -1,5 +1,5 @@
 ---
-title: "boro_nta"
+title: "Distribution on the Map"
 output: html_document
 date: "2024-12-03"
 ---
@@ -46,15 +46,6 @@ ggplot(incident_summary, aes(x = Year, y = Number_of_Incidents, fill = BORO)) +
   theme_minimal()
 ```
 
-
-```{r}
-nta_summary <- df_descriptive %>%
-  group_by(NTA_clean, BORO) %>%                 # Group by NTA and BORO
-  summarise(Number_of_Incidents = n(), .groups = "drop") %>%  # Count incidents
-  arrange(desc(Number_of_Incidents)) %>%  # Sort in descending order
-  slice_head(n = 10)
-nta_summary
-```
  
 ##Total incidents per NTA
  
@@ -64,70 +55,6 @@ nta_shape <- st_read("nynta2020_24d/nynta2020.shp")
 cdta_shape = st_read("nycdta2020_24d/nycdta2020.shp")
 boro_shape = st_read("Borough Boundaries/geo_export_391a75ed-0ae4-4c88-8c30-3588c75bd01e.shp")
 ```
-
-
-```{r}
-# Prepare incident data: count incidents per NTA_clean
-nta_incident_counts <- data_final %>%
-  group_by(NTA) %>%
-  summarise(Number_of_Incidents = n(), .groups = "drop")
-
-# Merge spatial data with incident counts
-nta_map_data <- nta_shape %>%
-  left_join(nta_incident_counts, by = c("NTAName" = "NTA"))
-
-# Create custom breaks for Number_of_Incidents
-nta_map_data <- nta_map_data %>%
-  mutate(
-    Incident_Range = cut(
-      Number_of_Incidents,
-      breaks = seq(0, 400, by = 80),  # Breaks from 0 to 1000, every 200 cases
-      labels = c("0-80", "81-160", "161-240", "241-320", "321-400"),
-      include.lowest = TRUE
-    )
-  )
-
-
-```
-
-
-
-
-
-Plot the map
-
-```{r}
-# Plot the map with custom ranges
-ggplot(data = nta_map_data) +
-  geom_sf(aes(fill = Incident_Range), color = "white", size = 0.2) +
-  scale_fill_manual(
-    values = c(
-      "0-80" = "#b2e2e2",
-      "81-160" = "skyblue",
-      "161-240" = "#66c2a4",
-      "241-320" = "#2ca25f",
-      "321-400" = "#006d2c"
-    ),
-    name = "Number of Incidents"
-  ) +
-  labs(
-    title = "Total Number of Incidents Across NYC NTAs from 2017 to 2023",
-    subtitle = "Incidents grouped by range (0-1000, 200 breaks)",
-    caption = "Data Source: Your dataset"
-  ) +
-  theme_minimal() +
-  theme(
-    axis.text = element_blank(),
-    axis.ticks = element_blank(),
-    panel.grid = element_blank()
-  )
-
-```
-
-
-
-
-
 
 
 
@@ -144,7 +71,8 @@ cdta_incident_counts <- data_final %>%
 
 ```
 
- 
+
+
  merge datasets
 ```{r}
 # Prepare incident data: count incidents per NTA_clean
@@ -169,8 +97,8 @@ cdta_map_data <- cdta_map_data %>%
 
 
 
-
 ```
+
 
 
 ```{r}
@@ -303,6 +231,37 @@ plot <- plot_ly() %>%
 # Display the plot
 plot
 
+```
+
+## CDTA plot for each Boroughs
+
+
+```{r}
+# Filter out borough
+boroughs <- unique(cdta_map_data$BoroName)
+```
+
+```{r}
+for (b in boroughs) {
+    borough_data <- cdta_map_data %>%
+        filter(BoroName == b)
+    plot <- ggplot(data = borough_data) +
+        geom_sf(aes(fill = Number_of_Incidents), color = "black") +
+      geom_sf_text(aes(label = Number_of_Incidents), size = 3, color = "white") +  # Add labels+
+        scale_fill_gradientn(
+      colors = c("blue", "green", "yellow", "red"), # Custom color scale
+      name = "Number of Incidents"
+    ) +
+        labs(
+            title = paste("CDTA Incidents in", b),
+            subtitle = "2017 to 2023",
+            x = "Longitude",
+            y = "Latitude"
+        ) +
+        theme_minimal()
+    print(plot)  # Move inside the loop
+}
+```
 ```
 
 
