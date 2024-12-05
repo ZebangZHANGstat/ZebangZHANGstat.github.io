@@ -1,0 +1,10 @@
+---
+title: "Examining Demographic Patterns in NYC Shooting Data"
+output: 
+  html_document:
+    css: bootstrap.min.css
+    toc: true
+    toc_float: true
+---
+
+Welcome!
