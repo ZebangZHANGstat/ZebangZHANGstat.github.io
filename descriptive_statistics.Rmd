@@ -455,11 +455,47 @@ cdta_incident_counts <- data_final %>%
   group_by(CDTA) %>%
   summarise(Number_of_Incidents = n(), .groups = "drop")
 
+
+
 # Filter out borough
 boroughs <- unique(cdta_map_data$BoroName)
 ```
 
 ```{r}
+# There are 3 NA in the dataset, since there are no incident in these CDTAs
+# Identify Missing Matches
+unmatched_cdta <- setdiff(cdta_shape$CDTA2020, data_final$CDTA)
+ 
+
+# Assign 0 to Missing Areas
+cdta_incident_counts <- data_final %>%
+  group_by(CDTA) %>%
+  summarise(Number_of_Incidents = n(), .groups = "drop") %>%
+  complete(CDTA = unique(cdta_shape$CDTA2020), fill = list(Number_of_Incidents = 0))
+
+
+
+
+
+#Re-Merge the Data
+cdta_map_data <- cdta_shape %>%
+  left_join(cdta_incident_counts, by = c("CDTA2020" = "CDTA"))
+
+# Update NA Handling
+cdta_map_data <- cdta_map_data %>%
+  mutate(
+    Number_of_Incidents = ifelse(is.na(Number_of_Incidents), 0, Number_of_Incidents),
+    Incident_Range = cut(
+      Number_of_Incidents,
+      breaks = seq(0, 600, by = 120), 
+      labels = c("0-120", "121-240", "241-360", "361-480", "481-600"),
+      include.lowest = TRUE
+    )
+  )
+```
+
+```{r}
+# Plot
 for (b in boroughs) {
     borough_data <- cdta_map_data %>%
         filter(BoroName == b)

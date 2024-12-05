@@ -2192,9 +2192,42 @@ cdta_incident_counts &lt;- data_final %&gt;%
   group_by(CDTA) %&gt;%
   summarise(Number_of_Incidents = n(), .groups = &quot;drop&quot;)
 
+
+
 # Filter out borough
 boroughs &lt;- unique(cdta_map_data$BoroName)</code></pre>
-<pre class="r"><code>for (b in boroughs) {
+<pre class="r"><code># There are 3 NA in the dataset, since there are no incident in these CDTAs
+# Identify Missing Matches
+unmatched_cdta &lt;- setdiff(cdta_shape$CDTA2020, data_final$CDTA)
+ 
+
+# Assign 0 to Missing Areas
+cdta_incident_counts &lt;- data_final %&gt;%
+  group_by(CDTA) %&gt;%
+  summarise(Number_of_Incidents = n(), .groups = &quot;drop&quot;) %&gt;%
+  complete(CDTA = unique(cdta_shape$CDTA2020), fill = list(Number_of_Incidents = 0))
+
+
+
+
+
+#Re-Merge the Data
+cdta_map_data &lt;- cdta_shape %&gt;%
+  left_join(cdta_incident_counts, by = c(&quot;CDTA2020&quot; = &quot;CDTA&quot;))
+
+# Update NA Handling
+cdta_map_data &lt;- cdta_map_data %&gt;%
+  mutate(
+    Number_of_Incidents = ifelse(is.na(Number_of_Incidents), 0, Number_of_Incidents),
+    Incident_Range = cut(
+      Number_of_Incidents,
+      breaks = seq(0, 600, by = 120), 
+      labels = c(&quot;0-120&quot;, &quot;121-240&quot;, &quot;241-360&quot;, &quot;361-480&quot;, &quot;481-600&quot;),
+      include.lowest = TRUE
+    )
+  )</code></pre>
+<pre class="r"><code># Plot
+for (b in boroughs) {
     borough_data &lt;- cdta_map_data %&gt;%
         filter(BoroName == b)
     plot &lt;- ggplot(data = borough_data) +
@@ -2213,13 +2246,7 @@ boroughs &lt;- unique(cdta_map_data$BoroName)</code></pre>
         theme_minimal()
     print(plot)  # Move inside the loop
 }</code></pre>
-<p><img src="descriptive_statistics_files/figure-html/unnamed-chunk-23-1.png" width="672" /><img src="descriptive_statistics_files/figure-html/unnamed-chunk-23-2.png" width="672" /></p>
-<pre><code>## Warning: Removed 2 rows containing missing values or
-## values outside the scale range (`geom_text()`).</code></pre>
-<p><img src="descriptive_statistics_files/figure-html/unnamed-chunk-23-3.png" width="672" /><img src="descriptive_statistics_files/figure-html/unnamed-chunk-23-4.png" width="672" /></p>
-<pre><code>## Warning: Removed 1 row containing missing values or
-## values outside the scale range (`geom_text()`).</code></pre>
-<p><img src="descriptive_statistics_files/figure-html/unnamed-chunk-23-5.png" width="672" /></p>
+<p><img src="descriptive_statistics_files/figure-html/unnamed-chunk-24-1.png" width="672" /><img src="descriptive_statistics_files/figure-html/unnamed-chunk-24-2.png" width="672" /><img src="descriptive_statistics_files/figure-html/unnamed-chunk-24-3.png" width="672" /><img src="descriptive_statistics_files/figure-html/unnamed-chunk-24-4.png" width="672" /><img src="descriptive_statistics_files/figure-html/unnamed-chunk-24-5.png" width="672" /></p>
 </div>
 </div>
 
