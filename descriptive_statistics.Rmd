@@ -438,3 +438,45 @@ top_10_nta_incident_rate_staten <- top_10_incident_rate_staten %>%
 # Display the table in the desired format
 kable(top_10_nta_incident_rate_staten, digits = 6, caption = "Top 10 NTAs with the Highest Incident Rate by Year in STATEN ISLAND")
 ```
+
+## CDTA map for each boro
+```{r}
+cdta_shape = st_read("nycdta2020_24d/nycdta2020.shp")
+
+## There is space between letter and number in CDTA, I deleted the space below
+data_final$CDTA <- gsub(" ", "", data_final$CDTA)
+
+cdta_incident_counts <- data_final %>%
+  group_by(CDTA) %>%
+  summarise(Number_of_Incidents = n(), .groups = "drop")
+
+# Prepare incident data: count incidents per NTA_clean
+cdta_incident_counts <- data_final %>%
+  group_by(CDTA) %>%
+  summarise(Number_of_Incidents = n(), .groups = "drop")
+
+# Filter out borough
+boroughs <- unique(cdta_map_data$BoroName)
+```
+
+```{r}
+for (b in boroughs) {
+    borough_data <- cdta_map_data %>%
+        filter(BoroName == b)
+    plot <- ggplot(data = borough_data) +
+        geom_sf(aes(fill = Number_of_Incidents), color = "black") +
+      geom_sf_text(aes(label = Number_of_Incidents), size = 3, color = "white") +  # Add labels+
+        scale_fill_gradientn(
+      colors = c("blue", "green", "yellow", "red"), # Custom color scale
+      name = "Number of Incidents"
+    ) +
+        labs(
+            title = paste("CDTA Incidents in", b),
+            subtitle = "2017 to 2023",
+            x = "Longitude",
+            y = "Latitude"
+        ) +
+        theme_minimal()
+    print(plot)  # Move inside the loop
+}
+```

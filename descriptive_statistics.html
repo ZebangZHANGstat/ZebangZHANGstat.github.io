@@ -2169,6 +2169,58 @@ ISLAND</caption>
 </div>
 </div>
 </div>
+<div id="cdta-map-for-each-boro" class="section level2">
+<h2>CDTA map for each boro</h2>
+<pre class="r"><code>cdta_shape = st_read(&quot;nycdta2020_24d/nycdta2020.shp&quot;)</code></pre>
+<pre><code>## Reading layer `nycdta2020&#39; from data source 
+##   `/Users/wangmingyin/Desktop/data science 1/Final_website/nycdta2020_24d/nycdta2020.shp&#39; 
+##   using driver `ESRI Shapefile&#39;
+## Simple feature collection with 71 features and 8 fields
+## Geometry type: MULTIPOLYGON
+## Dimension:     XY
+## Bounding box:  xmin: 913175.1 ymin: 120128.4 xmax: 1067383 ymax: 272844.3
+## Projected CRS: NAD83 / New York Long Island (ftUS)</code></pre>
+<pre class="r"><code>## There is space between letter and number in CDTA, I deleted the space below
+data_final$CDTA &lt;- gsub(&quot; &quot;, &quot;&quot;, data_final$CDTA)
+
+cdta_incident_counts &lt;- data_final %&gt;%
+  group_by(CDTA) %&gt;%
+  summarise(Number_of_Incidents = n(), .groups = &quot;drop&quot;)
+
+# Prepare incident data: count incidents per NTA_clean
+cdta_incident_counts &lt;- data_final %&gt;%
+  group_by(CDTA) %&gt;%
+  summarise(Number_of_Incidents = n(), .groups = &quot;drop&quot;)
+
+# Filter out borough
+boroughs &lt;- unique(cdta_map_data$BoroName)</code></pre>
+<pre class="r"><code>for (b in boroughs) {
+    borough_data &lt;- cdta_map_data %&gt;%
+        filter(BoroName == b)
+    plot &lt;- ggplot(data = borough_data) +
+        geom_sf(aes(fill = Number_of_Incidents), color = &quot;black&quot;) +
+      geom_sf_text(aes(label = Number_of_Incidents), size = 3, color = &quot;white&quot;) +  # Add labels+
+        scale_fill_gradientn(
+      colors = c(&quot;blue&quot;, &quot;green&quot;, &quot;yellow&quot;, &quot;red&quot;), # Custom color scale
+      name = &quot;Number of Incidents&quot;
+    ) +
+        labs(
+            title = paste(&quot;CDTA Incidents in&quot;, b),
+            subtitle = &quot;2017 to 2023&quot;,
+            x = &quot;Longitude&quot;,
+            y = &quot;Latitude&quot;
+        ) +
+        theme_minimal()
+    print(plot)  # Move inside the loop
+}</code></pre>
+<p><img src="descriptive_statistics_files/figure-html/unnamed-chunk-23-1.png" width="672" /><img src="descriptive_statistics_files/figure-html/unnamed-chunk-23-2.png" width="672" /></p>
+<pre><code>## Warning: Removed 2 rows containing missing values or
+## values outside the scale range (`geom_text()`).</code></pre>
+<p><img src="descriptive_statistics_files/figure-html/unnamed-chunk-23-3.png" width="672" /><img src="descriptive_statistics_files/figure-html/unnamed-chunk-23-4.png" width="672" /></p>
+<pre><code>## Warning: Removed 1 row containing missing values or
+## values outside the scale range (`geom_text()`).</code></pre>
+<p><img src="descriptive_statistics_files/figure-html/unnamed-chunk-23-5.png" width="672" /></p>
+</div>
 </div>
 
 
