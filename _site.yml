@@ -1,0 +1,23 @@
+name: "NYC shooting incidents analysis"
+output_dir: "."
+navbar:
+  title: "Home"
+  right:
+    - text: "Distribution"
+      href: descriptive_statistics.html
+    - text: "Sociodemographic"
+      href: Poverty.html 
+    - text: "Report"
+      href: boro_nta.html
+    - text: "Shiny App"
+      href: https://zz3309.shinyapps.io/nyc_shooting_incident_shiny_dashboard/
+    - icon: fa-envelope fa-lg
+      href: mailto:<zz3309@cumc.columbia.edu>
+    - icon: fa-github fa-lg
+      href: http://github.com/ZebangZHANGstat/
+output:
+  html_document:
+    css: bootstrap.min.css
+    toc: true
+    toc_float: true
+    
