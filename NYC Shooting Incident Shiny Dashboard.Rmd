@@ -25,29 +25,22 @@ Column {.sidebar}
 -----------------------------------------------------------------------
 
 ```{r}
-boroughs = df |> 
-  filter(!is.na(neighbourhood_group)) |> 
-  distinct(neighbourhood_group) |> 
-  pull()
- 
-# selectInput widget
-selectInput(
+radioButtons(
   "borough_choice", 
-  label = h3("Choose borough"),  
-  choices = boroughs, selected = "Manhattan")
+  label = h3("Choose Borough"),
+  choices = c("Manhattan","Brooklyn","Queens","Bronx","Staten Island"), selected = "Manhattan")
 ```
 
 ```{r}
 year = df |> distinct(Year) |> arrange(desc(Year)) |> pull()
 
-# radioButtons widget
-radioButtons(
+selectInput(
   "year_choice", 
   label = h3("Choose year"),
   choices = year, selected = "2022")
 ```
 
-Column {data-width=600}
+Column {data-width=700}
 -----------------------------------------------------------------------
 
 ### Incident distribution on NYC map
@@ -56,10 +49,17 @@ Column {data-width=600}
 Sys.setenv('MAPBOX_TOKEN' = 'pk.eyJ1IjoiZWR3YXJkenp6IiwiYSI6ImNtNDkwMzZ3YTA1MGIyanE1ZjdlNTZodjcifQ.BsLSffH3a0z5Xqf1Tqc4ag') 
 
 renderPlotly({
+  center_coords <- switch(input$borough_choice,
+                          "Manhattan" = list(lon = -73.95, lat = 40.785),
+                          "Brooklyn" = list(lon = -73.945, lat = 40.65),
+                          "Bronx" = list(lon = -73.884, lat = 40.85),
+                          "Queens" = list(lon = -73.837, lat = 40.72),
+                          "Staten Island" = list(lon = -74.159, lat = 40.58))
+  
   incidents_filtered <- df %>%
-    filter(neighbourhood_group == input[["borough_choice"]],
-         Year == input[["year_choice"]]) %>%
-    drop_na(Sky_Is_Dark, Longitude, Latitude, NTA, OCCUR_TIME,OCCUR_DATE) |>
+    filter(neighbourhood_group == input$borough_choice,
+           Year == input[["year_choice"]]) %>%
+    drop_na(Sky_Is_Dark, Longitude, Latitude, NTA, OCCUR_TIME, OCCUR_DATE) |>
     mutate(Sky_Condition = ifelse(Sky_Is_Dark, "Night", "Day"))
   
   plot_ly(data = incidents_filtered, 
@@ -77,7 +77,7 @@ renderPlotly({
     layout(
       mapbox = list(
         style = "carto-positron",      
-        center = list(lon = -73.90, lat = 40.7),  
+        center = center_coords,        
         zoom = 9.5                    
       ),
       showlegend = TRUE,               
@@ -85,31 +85,7 @@ renderPlotly({
 })
 ```
 
-Column {data-width=400}
------------------------------------------------------------------------
-
-### NTA Incident rate by Borough and Year
-
-```{r}
-renderDataTable({
-  df |>
-    filter(
-      neighbourhood_group == input[["borough_choice"]], 
-      Year == input[["year_choice"]],
-      NTAType == "Residential") |>
-    select(neighbourhood_group,Year, NTA,incident_rate_by_year_nta) |>
-    distinct() |>
-    rename(
-      Borough = neighbourhood_group,
-      Incident_rate = incident_rate_by_year_nta
-    ) |>
-    arrange(desc(Incident_rate)) |>
-    mutate(Incident_rate = signif(Incident_rate, 3)) |>
-    datatable(options = list(pageLength = 5, autoWidth = TRUE)) 
-})
-```
-
-### Top NTAs by Incident Rate
+### Top 10 NTAs with the highest Annual Incident Rate by Borough and Year
 
 ```{r}
 renderPlotly({
@@ -145,6 +121,29 @@ renderPlotly({
       ),
       yaxis = list(title = "Incident Rate")
     )
+})
+```
+
+Column {data-width=500}
+-----------------------------------------------------------------------
+
+### NTA Total Incidents by Borough and Year
+
+```{r}
+renderDataTable({
+  top_10_nta <- df %>%
+    filter(neighbourhood_group == input[["borough_choice"]],
+           Year == input[["year_choice"]],
+           NTAType == "Residential") %>% 
+    group_by(BORO, Year, NTA) %>%
+    summarise(total_incidents = n(),
+              total_population = first(Total_population_nta),
+              percent_poverty = first(Percent_poverty),
+              percent_education = first(Percent_education)) %>%
+    mutate(incident_rate = (total_incidents / total_population) * 100) %>%  
+    arrange(desc(incident_rate)) %>%  
+    ungroup() %>%
+    select(NTA, incident_rate, total_incidents, total_population, percent_poverty, percent_education)
 })
 ```
 
