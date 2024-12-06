@@ -419,6 +419,14 @@ href="https://www.nyc.gov/site/planning/data-maps/open-data/census-download-meta
 or you can <a
 href="https://s-media.nyc.gov/agencies/dcp/assets/files/zip/data-tools/bytes/nycdta2020_24d.zip">download</a></p>
 </div>
+<div id="borough-boundaries-data" class="section level3">
+<h3>Borough Boundaries data</h3>
+<p>The Borough Boundaries dataset from the NYC Open Data portal provides
+detailed information about the geographical boundaries of the five
+boroughs of New York City: Bronx, Brooklyn, Manhattan, Queens, and
+Staten Island. You can find the data <a
+href="https://data.cityofnewyork.us/City-Government/Borough-Boundaries/tqmj-j8zm">here</a></p>
+</div>
 <div id="neighborhood-data" class="section level3">
 <h3>Neighborhood data</h3>
 <p><a
@@ -445,11 +453,12 @@ href="https://a816-dohbesp.nyc.gov/IndicatorPublic/data-explorer/economic-condit
 <p>The original <a
 href="https://data.cityofnewyork.us/Public-Safety/NYPD-Shooting-Incident-Data-Historic-/833y-fsy8/about_data">data</a>
 only consists of some basic information and doesn’t show NTA, CDTA,
-neighborhood information of each incident, so we added these information
-to the original data base on the coordinate of each incident, we also
-add some demographic information: population, education level, poverty
-level, .etc to the data.</p>
-<p>Here’s how we add the information base on all the data we have:</p>
+Borough and neighborhood information of each incident, so we added these
+information to the original data base on the coordinate of each
+incident, we also add some demographic information: population,
+education level, poverty level, .etc to the data.</p>
+<p>Here’s how we added the information based on all the data we
+have:</p>
 <ul>
 <li><p>enrich NYC shooting incident data with neighborhood-level
 information by performing spatial operations, converts the shooting data
@@ -499,7 +508,7 @@ download.file(
 )
 neighbourhoods = st_read(&quot;neighbourhoods.geojson&quot;)</code></pre>
 <pre><code>## Reading layer `neighbourhoods&#39; from data source 
-##   `/Users/hayashiakira/Desktop/ZebangZHANGstat.github.io/neighbourhoods.geojson&#39; 
+##   `/Users/wangmingyin/Desktop/data science 1/Final_website/neighbourhoods.geojson&#39; 
 ##   using driver `GeoJSON&#39;
 ## Simple feature collection with 233 features and 2 fields
 ## Geometry type: MULTIPOLYGON
@@ -543,7 +552,7 @@ df_sf &lt;- st_as_sf(df, coords = c(&quot;X_COORD_CD&quot;, &quot;Y_COORD_CD&quo
 # Read neighborhood shapefile
 nta &lt;- st_read(&quot;./data/nynta2020_24d/nynta2020.shp&quot;)</code></pre>
 <pre><code>## Reading layer `nynta2020&#39; from data source 
-##   `/Users/hayashiakira/Desktop/ZebangZHANGstat.github.io/data/nynta2020_24d/nynta2020.shp&#39; 
+##   `/Users/wangmingyin/Desktop/data science 1/Final_website/data/nynta2020_24d/nynta2020.shp&#39; 
 ##   using driver `ESRI Shapefile&#39;
 ## Simple feature collection with 262 features and 11 fields
 ## Geometry type: MULTIPOLYGON
@@ -570,7 +579,7 @@ df_sf &lt;- st_as_sf(df, coords = c(&quot;X_COORD_CD&quot;, &quot;Y_COORD_CD&quo
 # Read neighborhood shapefile
 neighborhoods_2010 &lt;- st_read(&quot;./data/nynta2010_24d/nynta2010.shp&quot;)</code></pre>
 <pre><code>## Reading layer `nynta2010&#39; from data source 
-##   `/Users/hayashiakira/Desktop/ZebangZHANGstat.github.io/data/nynta2010_24d/nynta2010.shp&#39; 
+##   `/Users/wangmingyin/Desktop/data science 1/Final_website/data/nynta2010_24d/nynta2010.shp&#39; 
 ##   using driver `ESRI Shapefile&#39;
 ## Simple feature collection with 195 features and 7 fields
 ## Geometry type: MULTIPOLYGON
@@ -713,7 +722,7 @@ df_sf &lt;- st_as_sf(df, coords = c(&quot;X_COORD_CD&quot;, &quot;Y_COORD_CD&quo
 
 cdta &lt;- st_read(&quot;./data/nycdta2020_24d/nycdta2020.shp&quot;)</code></pre>
 <pre><code>## Reading layer `nycdta2020&#39; from data source 
-##   `/Users/hayashiakira/Desktop/ZebangZHANGstat.github.io/data/nycdta2020_24d/nycdta2020.shp&#39; 
+##   `/Users/wangmingyin/Desktop/data science 1/Final_website/data/nycdta2020_24d/nycdta2020.shp&#39; 
 ##   using driver `ESRI Shapefile&#39;
 ## Simple feature collection with 71 features and 8 fields
 ## Geometry type: MULTIPOLYGON
