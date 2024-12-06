@@ -33,6 +33,10 @@ In this exploratory study, we aim to analyze the geographic and temporal distrib
 
 Understanding the dynamics of shooting incidents in New York City is crucial for enhancing public safety and fostering resilient communities. By examining demographic patterns in shooting crime data alongside datasets on high school graduation rates and poverty levels, our project aims to identify the socioeconomic factors that influence gun violence. Analyzing how disparities in education and income relate to shooting incidents provides valuable insights for targeted interventions.
 
+## Introduction
+
+Gun violence is a significant public health and social issue New York City, where diverse communities and complex socioeconomic conditions create a unique landscape for understanding its contributing factors. This project examines the geographic, temporal, and socioeconomic patterns of shootings in NYC to identify critical influences on gun violence. We explore how shooting incidents are distributed across boroughs and neighborhoods and examine temporal trends, such as seasonal, monthly, and time-of-day variations. Additionally, we investigate the relationship between education and gun violence, focusing on whether lower high school graduation rates correlate with higher shooting prevalence. Finally, we analyze the connection between poverty and gun violence to determine if neighborhoods with higher poverty levels experience increased incidents of shootings.
+
 ## Significance
 
 This research will aid in informing targeted public health and safety interventions by identifying the communities most impacted by shootings. Understanding these patterns will enable policymakers to implement more effective violence prevention measures and allocate resources where they are needed the most.

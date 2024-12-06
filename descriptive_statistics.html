@@ -385,17 +385,50 @@ class="section level1">
 <pre class="r"><code>library(ggplot2)
 library(readxl)
 library(readr)
-library(tidyverse)
-library(dplyr)
-library(sf)
-library(plotly)
-library(geojsonio)
-library(knitr)
+library(tidyverse)</code></pre>
+<pre><code>## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+## ✔ dplyr     1.1.4     ✔ stringr   1.5.1
+## ✔ forcats   1.0.0     ✔ tibble    3.2.1
+## ✔ lubridate 1.9.3     ✔ tidyr     1.3.1
+## ✔ purrr     1.0.2     
+## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()
+## ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+<pre class="r"><code>library(dplyr)
+library(sf)</code></pre>
+<pre><code>## Linking to GEOS 3.11.0, GDAL 3.5.3, PROJ 9.1.0; sf_use_s2() is TRUE</code></pre>
+<pre class="r"><code>library(plotly)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;plotly&#39;
+## 
+## The following object is masked from &#39;package:ggplot2&#39;:
+## 
+##     last_plot
+## 
+## The following object is masked from &#39;package:stats&#39;:
+## 
+##     filter
+## 
+## The following object is masked from &#39;package:graphics&#39;:
+## 
+##     layout</code></pre>
+<pre class="r"><code>library(geojsonio)</code></pre>
+<pre><code>## Registered S3 method overwritten by &#39;geojsonsf&#39;:
+##   method        from   
+##   print.geojson geojson
+## 
+## Attaching package: &#39;geojsonio&#39;
+## 
+## The following object is masked from &#39;package:base&#39;:
+## 
+##     pretty</code></pre>
+<pre class="r"><code>library(knitr)
 library(tidyr)</code></pre>
 <pre class="r"><code># Load the dataset
 df_descriptive=read_csv(&quot;data_final.csv&quot;)</code></pre>
 <pre><code>## Rows: 9820 Columns: 40
-## ── Column specification ──────────────────────────────────────
+## ── Column specification ────────────────────────────────────────────────────────
 ## Delimiter: &quot;,&quot;
 ## chr  (17): BORO, LOC_OF_OCCUR_DESC, LOC_CLASSFCTN_DESC, LOCATION_DESC, PERP_...
 ## dbl  (15): INCIDENT_KEY, PRECINCT, JURISDICTION_CODE, X_COORD_CD, Y_COORD_CD...
@@ -508,8 +541,8 @@ incident_by_nta_borough &lt;- df_descriptive %&gt;%
   unnest(cols = c(BRONX, BROOKLYN, MANHATTAN, QUEENS, `STATEN ISLAND`)) %&gt;%
   select(row_num, everything())%&gt;%
   slice(1:10)</code></pre>
-<pre><code>## `summarise()` has grouped output by &#39;BORO&#39;. You can override
-## using the `.groups` argument.</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;BORO&#39;. You can override using the
+## `.groups` argument.</code></pre>
 <pre class="r"><code># Display the table in the desired format
 kable(incident_by_nta_borough, caption = &quot;Top 10 NTAs with Total Shooting Incidents in Each Borough (2017-2023)&quot;)</code></pre>
 <table style="width:100%;">
@@ -752,9 +785,8 @@ victim_summary &lt;- df_descriptive %&gt;%
   group_by(VIC_SEX, VIC_AGE_GROUP, VIC_RACE) %&gt;%
   summarise(total_victims = n()) %&gt;%
   drop_na()</code></pre>
-<pre><code>## `summarise()` has grouped output by &#39;VIC_SEX&#39;,
-## &#39;VIC_AGE_GROUP&#39;. You can override using the `.groups`
-## argument.</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;VIC_SEX&#39;, &#39;VIC_AGE_GROUP&#39;. You can
+## override using the `.groups` argument.</code></pre>
 <pre class="r"><code># Plotting the description of male victims
 ggplot(victim_summary %&gt;% filter(VIC_SEX == &quot;M&quot;), aes(x = VIC_AGE_GROUP, y = total_victims, fill = VIC_RACE)) +
   geom_bar(stat = &#39;identity&#39;, position = &#39;dodge&#39;) +
@@ -815,8 +847,8 @@ top_10_nta_overall &lt;- df_descriptive %&gt;%
   ungroup() %&gt;%
   slice(1:10) %&gt;%
   select(BORO, NTA, total_incidents, total_population, percent_poverty, percent_education)</code></pre>
-<pre><code>## `summarise()` has grouped output by &#39;BORO&#39;. You can override
-## using the `.groups` argument.</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;BORO&#39;. You can override using the
+## `.groups` argument.</code></pre>
 <pre class="r"><code># Display the table in the desired format
 kable(top_10_nta_overall, digits = 2, caption = &quot;Top 10 NTAs with the Highest Total Shooting Incidents&quot;)</code></pre>
 <table>
@@ -945,8 +977,8 @@ top_10_nta_overall_manhattan &lt;- df_descriptive %&gt;%
   ungroup() %&gt;%
   slice(1:10) %&gt;%
   select(BORO, NTA, total_incidents, total_population, percent_poverty, percent_education)</code></pre>
-<pre><code>## `summarise()` has grouped output by &#39;BORO&#39;. You can override
-## using the `.groups` argument.</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;BORO&#39;. You can override using the
+## `.groups` argument.</code></pre>
 <pre class="r"><code># Display the table in the desired format
 kable(top_10_nta_overall_manhattan, digits = 2, caption = &quot;Top 10 NTAs with the Highest Total Shooting Incidents in MANHATTAN&quot;)</code></pre>
 <table>
@@ -1068,8 +1100,8 @@ top_10_nta_overall_brooklyn &lt;- df_descriptive %&gt;%
   ungroup() %&gt;%
   slice(1:10) %&gt;%
   select(BORO, NTA, total_incidents, total_population, percent_poverty, percent_education)</code></pre>
-<pre><code>## `summarise()` has grouped output by &#39;BORO&#39;. You can override
-## using the `.groups` argument.</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;BORO&#39;. You can override using the
+## `.groups` argument.</code></pre>
 <pre class="r"><code># Display the table in the desired format
 kable(top_10_nta_overall_brooklyn, digits = 2, caption = &quot;Top 10 NTAs with the Highest Total Shooting Incidents in BROOKLYN&quot;)</code></pre>
 <table>
@@ -1191,8 +1223,8 @@ top_10_nta_overall_bronx &lt;- df_descriptive %&gt;%
   ungroup() %&gt;%
   slice(1:10) %&gt;%
   select(BORO, NTA, total_incidents, total_population, percent_poverty, percent_education)</code></pre>
-<pre><code>## `summarise()` has grouped output by &#39;BORO&#39;. You can override
-## using the `.groups` argument.</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;BORO&#39;. You can override using the
+## `.groups` argument.</code></pre>
 <pre class="r"><code># Display the table in the desired format
 kable(top_10_nta_overall_bronx, digits = 2, caption = &quot;Top 10 NTAs with the Highest Total Shooting Incidents in BRONX&quot;)</code></pre>
 <table>
@@ -1314,8 +1346,8 @@ top_10_nta_overall_queens &lt;- df_descriptive %&gt;%
   ungroup() %&gt;%
   slice(1:10) %&gt;%
   select(BORO, NTA, total_incidents, total_population, percent_poverty, percent_education)</code></pre>
-<pre><code>## `summarise()` has grouped output by &#39;BORO&#39;. You can override
-## using the `.groups` argument.</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;BORO&#39;. You can override using the
+## `.groups` argument.</code></pre>
 <pre class="r"><code># Display the table in the desired format
 kable(top_10_nta_overall_queens, digits = 2, caption = &quot;Top 10 NTAs with the Highest Total Shooting Incidents in QUEENS&quot;)</code></pre>
 <table>
@@ -1437,8 +1469,8 @@ top_10_nta_overall_staten &lt;- df_descriptive %&gt;%
   ungroup() %&gt;%
   slice(1:10) %&gt;%
   select(BORO, NTA, total_incidents, total_population, percent_poverty, percent_education)</code></pre>
-<pre><code>## `summarise()` has grouped output by &#39;BORO&#39;. You can override
-## using the `.groups` argument.</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;BORO&#39;. You can override using the
+## `.groups` argument.</code></pre>
 <pre class="r"><code># Display the table in the desired format
 kable(top_10_nta_overall_staten, digits = 2, caption = &quot;Top 10 NTAs with the Highest Total Shooting Incidents in STATEN ISLAND&quot;)</code></pre>
 <table>
@@ -2172,6 +2204,7 @@ ISLAND</caption>
 </div>
 </div>
 </div>
+<<<<<<< HEAD
 <div id="cdta-map-for-each-boro" class="section level2">
 <h2>CDTA map for each boro</h2>
 <pre class="r"><code>cdta_shape = st_read(&quot;nycdta2020_24d/nycdta2020.shp&quot;)</code></pre>
@@ -2251,6 +2284,8 @@ for (b in boroughs) {
 }</code></pre>
 <p><img src="descriptive_statistics_files/figure-html/unnamed-chunk-24-1.png" width="672" /><img src="descriptive_statistics_files/figure-html/unnamed-chunk-24-2.png" width="672" /><img src="descriptive_statistics_files/figure-html/unnamed-chunk-24-3.png" width="672" /><img src="descriptive_statistics_files/figure-html/unnamed-chunk-24-4.png" width="672" /><img src="descriptive_statistics_files/figure-html/unnamed-chunk-24-5.png" width="672" /></p>
 </div>
+=======
+>>>>>>> 86347d088e329e5b4473f69c2284a0d2ce530107
 </div>
 
 
