@@ -62,9 +62,60 @@ Our project focuses on examining the socioeconomic and temporal factors that inf
 
 In this section, describe the data sources, cleaning process, and the methods used to explore the research questions.
 
-```{r}
+### Data source
 
-```
+#### Original data
+
+This report analyzes shooting incidents in NYC. You can find the original data before merging [here](https://data.cityofnewyork.us/Public-Safety/NYPD-Shooting-Incident-Data-Historic-/833y-fsy8/about_data). This data is from NYCOpenData, consists some basic information: occur time, coordinate of each incident, victim's information, .etc. 
+
+#### data for additional information
+
+##### NTA shape data
+
+Neighborhood Tabulation Areas (NTAs) are medium-sized statistical geographies for reporting Decennial Census and American Community Survey. NTAs were delineated with the need for both geographic specificity and statistical reliability in mind. Shapefile of NTA is get from NYC Planning website, you can find the data [here](https://www.nyc.gov/site/planning/data-maps/open-data/census-download-metadata.page), or you can [download](https://s-media.nyc.gov/agencies/dcp/assets/files/zip/data-tools/bytes/nynta2020_24d.zip)
+
+##### CDTA data
+
+The Department of City Planning (DCP) created Community District Tabulation Areas (CDTAs) to closely approximate the 59 Community Districts of New York City for the purpose of reporting American Community Survey (ACS) data. You can find the data [here](https://www.nyc.gov/site/planning/data-maps/open-data/census-download-metadata.page), or you can [download](https://s-media.nyc.gov/agencies/dcp/assets/files/zip/data-tools/bytes/nycdta2020_24d.zip)
+
+##### Borough Boundaries data
+
+The Borough Boundaries dataset from the NYC Open Data portal provides detailed information about the geographical boundaries of the five boroughs of New York City: Bronx, Brooklyn, Manhattan, Queens, and Staten Island. You can find the data [here](https://data.cityofnewyork.us/City-Government/Borough-Boundaries/tqmj-j8zm)
+
+##### Neighborhood data
+
+[Here](https://data.insideairbnb.com/united-states/ny/new-york-city/2024-09-04/visualisations/neighbourhoods.csv) is neighbourhood list for geo filter. Sourced from city or open source GIS files. [Here](https://data.insideairbnb.com/united-states/ny/new-york-city/2024-09-04/visualisations/neighbourhoods.geojson) is GeoJSON file of neighbourhoods of the city.
+
+##### Education data
+
+The data source for education is shown [here](https://a816-dohbesp.nyc.gov/IndicatorPublic/data-explorer/social-conditions/?id=2334#display=summary).
+
+##### Poverty data
+
+The data source for poverty is [here](https://a816-dohbesp.nyc.gov/IndicatorPublic/data-explorer/economic-conditions/?id=103#display=summary)
+
+
+### Data processing
+
+The original [data](https://data.cityofnewyork.us/Public-Safety/NYPD-Shooting-Incident-Data-Historic-/833y-fsy8/about_data) only consists of some basic information and doesn’t show NTA, CDTA, Borough and neighborhood information of each incident, so we added these information to the original data base on the coordinate of each incident, we also add some demographic information: population, education level, poverty level, .etc to the data.
+
+Here's how we added the information based on all the data we have:
+
+* enrich NYC shooting incident data with neighborhood-level information by performing spatial operations, converts the shooting data into a spatial format, joins it with neighborhood boundaries, and adds additional neighborhood attributes for deeper spatial analysis.
+
+* enrich NYC shooting incident data with neighborhood-level information by performing spatial operations, converts the shooting data into a spatial format, joins it with neighborhood boundaries (both 2020 and 2010 shapefiles), and adds additional neighborhood attributes for deeper spatial analysis.
+
+* using the `holidayNYSE()` function to determine which dates are public holidays
+
+* calculates dawn and dusk times for each unique date in the dataset. Using NYC's coordinates (`latitude` and `longitude`), the `getSunlightTimes()` function generates dawn and dusk times for each day
+
+* reads in population data from an Excel file, filters relevant rows, selects specific columns, and merges this population data with the original dataset. 
+
+* filters the poverty and education data for the relevant time period (2017-21) and geographic type (`NTA2020`), selects specific columns, and merges this poverty data with the shooting incident dataset. 
+
+* calculates shooting incident rates for both Neighborhood Tabulation Areas (NTAs) and boroughs by year.
+
+The detailed code is [here](data_processing.html)
 
 ### Neighborhood Poverty
 ```{r}
