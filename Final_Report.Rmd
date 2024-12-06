@@ -409,36 +409,6 @@ Here's how we added the information based on all the data we have:
 
 The detailed code is [here](data_processing.html)
 
-#### Neighborhood Poverty
-```{r}
-neighborhood_poverty <- read.csv("./data/neighborhood_poverty.csv")
-
-# Select specific columns from neighborhood_poverty
-neighborhood_poverty_selected <- neighborhood_poverty %>% 
-  filter(TimePeriod == '2017-21') %>% 
-  filter(GeoType == 'NTA2020' ) %>% 
-  select(Number, Percent, Geography)
-
-```
-
-* Downloaded the full table from the NYC Environment and Health Data Portal
-* Filtered to include only percent data from 2017-2021 for each NTA 
-* Describes estimated percentage of people whose annual income falls below 100% of the federal poverty level in each NTA
-
-#### Graduated High School
-```{r}
-neighborhood_education=read.csv("./data/graduated_high_school.csv")
-neighborhood_education_selected <- neighborhood_education %>% 
-  filter(TimePeriod == '2017-21') %>% 
-  filter(GeoType == 'NTA2020' ) %>% 
-  select(Number, Percent, Geography)
-
-```
-
-* Downloaded the full table from the NYC Environment and Health Data Portal
-* Filtered the data to include only the percentage information for high school graduation between 2017 and 2021, focusing on Neighborhood Tabulation Areas (NTAs) as defined by the 2020 census.
-* This dataset describes the estimated percentage of individuals aged 25 and older who completed high school or obtained a high school equivalency in each NTA
-
 ## Exploratory data analysis
 ```{r}
 library(ggplot2)
@@ -474,6 +444,7 @@ ggplot(year_counts, aes(x = Year, y = Count, group = 1)) +
        y = 'Number of Shooting Incidents') +
   theme_minimal()
 ```
+
 The chart shows a stable trend in shooting incidents from 2017 to 2019, followed by a sharp increase in 2020, likely linked to socio-economic factors like the COVID-19 pandemic. Incidents peaked in 2021 and then declined through 2023.
 
 ```{r}
@@ -560,9 +531,176 @@ The 25-44 age group has the highest number of victims, significantly more than a
 
 
 ## Maps
+
+### Plot of Total Number of Incidents Across NYC BOROs (2017-2023)
+
+```{r, include=FALSE}
+# Load dataset
+
+cdta_shape = st_read("nycdta2020_24d/nycdta2020.shp")
+boro_shape = st_read("Borough Boundaries/geo_export_391a75ed-0ae4-4c88-8c30-3588c75bd01e.shp")
+```
+
+
 ```{r}
+# Count the boro incident
+boro_incident_counts <- data_final %>%
+  group_by(BORO) %>%
+  summarise(Number_of_Incidents = n(), .groups = "drop")  %>%
+  mutate(BORO = tolower(BORO) )
+
+# Lowercase the boro in boro_shape
+boro_shape = boro_shape %>%
+  mutate(boro_name = tolower(boro_name))
+ 
+
+# Merge spatial data with incident counts
+boro_map_data <- boro_shape %>%
+  left_join(boro_incident_counts, by = c("boro_name" = "BORO"))
+
+data_final <- read_csv("data_final.csv")
+boro_map_data <- boro_map_data %>%
+  mutate(
+    hover_text = paste("Borough:", boro_name, "<br>Total Incidents:", Number_of_Incidents)
+  )
+
+# Create the interactive plot with click functionality
+plot <- plot_ly(
+  data = boro_map_data,
+  type = "scattermapbox",
+  split = ~boro_name,  # Separate polygons by boroughs
+  color = ~Number_of_Incidents,  # Color based on the number of incidents
+  colors = "viridis",  # Use a color scale
+  text = ~hover_text,  # Display hover text
+  hoverinfo = "text",
+  marker = list(size = 8, opacity = 0.7)
+) %>%
+  layout(
+    title = "Total Number of Incidents Across NYC BOROs (2017-2023)",
+    mapbox = list(
+      style = "carto-positron",  # Base map style
+      center = list(lon = -74.0060, lat = 40.7128),  # Center map on NYC
+      zoom = 10
+    )
+  )
+
+# Add click functionality to display the borough name and number of incidents
+plot <- plot %>%
+  event_register("plotly_click") %>%
+  htmlwidgets::onRender("
+    function(el, x) {
+      el.on('plotly_click', function(d) {
+        var point = d.points[0];
+        var text = point.text;
+        alert('You clicked on: ' + text);
+      });
+    }
+  ")
+
+# Display the interactive plot
+plot
 
 ```
+
+The map shows the total number of incidents across NYC boroughs (2017–2023), with each borough represented by a distinct color. A gradient is used to indicate the magnitude of incidents, with darker shades corresponding to higher counts, ranging from 0 to over 3,000 incidents. Each borough is outlined and filled with its respective color, making it easy to distinguish. The legend on the right identifies the boroughs (Bronx, Brooklyn, Manhattan, Queens, Staten Island) and aligns with the color gradient to show the number of incidents. This visualization highlights geographical disparities in incident frequency across the boroughs, aiding in understanding spatial distribution patterns.
+
+
+
+### Plot of Total Number of Incidents Across NYC CDTAs from 2017 to 2023
+```{r}
+data_final$CDTA <- gsub(" ", "", data_final$CDTA)
+
+cdta_incident_counts <- data_final %>%
+  group_by(CDTA) %>%
+  summarise(Number_of_Incidents = n(), .groups = "drop")
+
+# Remove any trailing spaces or mismatches in CDTA identifiers:
+cdta_shape$CDTA2020 <- gsub(" ", "", cdta_shape$CDTA2020)
+data_final$CDTA <- gsub(" ", "", data_final$CDTA)
+
+# Identify Missing Matches
+unmatched_cdta <- setdiff(cdta_shape$CDTA2020, data_final$CDTA)
+
+#Re-Merge the Data
+cdta_map_data <- cdta_shape %>%
+  left_join(cdta_incident_counts, by = c("CDTA2020" = "CDTA"))
+
+# Update NA Handling
+cdta_map_data <- cdta_map_data %>%
+  mutate(
+    Number_of_Incidents = ifelse(is.na(Number_of_Incidents), 0, Number_of_Incidents),
+    Incident_Range = cut(
+      Number_of_Incidents,
+      breaks = seq(0, 600, by = 120), 
+      labels = c("0-120", "121-240", "241-360", "361-480", "481-600"),
+      include.lowest = TRUE
+    )
+  )
+
+ggplot(data = cdta_map_data) +
+  geom_sf(aes(fill = Incident_Range), color = "white", size = 0.2) +
+ geom_sf_text(aes(label = Number_of_Incidents), size = 3, color = "black") +  # Add labels+
+  scale_fill_manual(
+    values = c(
+      "0-120" = "#b2e2e2",
+      "121-240" = "skyblue",
+      "241-360" = "#66c2a4",
+      "361-480" = "#2ca25f",
+      "481-600" = "#006d2c"
+    ),
+    name = "Number of Incidents"
+  ) +
+  labs(
+    title = "Total Number of Incidents Across NYC CDTAs from 2017 to 2023",
+    subtitle = "Incidents grouped by range (0-600, 120 breaks)",
+    caption = "Data Source: Your dataset"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text = element_blank(),
+    axis.ticks = element_blank(),
+    panel.grid = element_blank(),
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank()
+  )
+```
+
+
+The map shows NYC CDTA incidents (2017–2023) using a gradient from light blue (fewer incidents) to dark green (more incidents), with counts labeled on each district. Dark green areas highlight hotspots, likely in densely populated regions, while lighter blue areas, like Staten Island, show fewer incidents. This visualization helps identify trends and prioritize safety efforts.
+
+### Number of Incidents counted by CDTAs in each Boroughs from 2017 to 2023
+```{r}
+boroughs <- unique(cdta_map_data$BoroName)
+for (b in boroughs) {
+    borough_data <- cdta_map_data %>%
+        filter(BoroName == b)
+    plot <- ggplot(data = borough_data) +
+        geom_sf(aes(fill = Number_of_Incidents), color = "black") +
+      geom_sf_text(aes(label = Number_of_Incidents), size = 3, color = "black") +  # Add labels
+        scale_fill_gradientn(
+      colors = c( "green", "yellow", "red"), # Custom color scale
+      name = "Number of Incidents"
+    ) +
+        labs(
+            title = paste("CDTA Incidents in", b),
+            subtitle = "2017 to 2023",
+            x = "Longitude",
+            y = "Latitude"
+        ) +
+        theme_minimal()
+    print(plot) 
+}
+```
+
+The Bronx demonstrates significant variability in the number of incidents across its CDTAs, with central and southern regions experiencing the highest numbers of incidents, some exceeding 300. This highlights the borough as a hotspot for crime relative to others. Socioeconomic challenges, high population density, or structural inequities could contribute to these trends. Interventions should prioritize these high-incident areas by allocating additional law enforcement resources and community support programs to mitigate the causes of elevated crime levels.
+
+Manhattan shows a relatively low overall number of incidents, except for a few northern neighborhoods, where one CDTA is a clear outlier with incidents surpassing 1200. This disparity suggests a concentration of crime in specific areas rather than borough-wide. The localized nature of the issue could be due to unique socioeconomic pressures or demographic factors in those neighborhoods. Targeted initiatives such as community policing or economic investment in northern Manhattan could help address these localized hotspots.
+
+Queens generally exhibits a safer profile with most CDTAs reporting fewer than 100 incidents. However, one central area stands out with more than 400 incidents, marking it as a concern. The low number of incidents elsewhere reflects the suburban and less dense nature of the borough. Efforts in Queens should focus on analyzing the central hotspot to determine the underlying causes, such as potential economic or social stressors, and implementing programs to improve community safety.
+
+Brooklyn presents a widespread distribution of incidents, with several CDTAs exceeding 500 incidents. The borough shows higher overall numbers compared to Queens and Manhattan, which may be linked to its high population density and mixed socioeconomic profile. The more even distribution of incidents suggests a need for borough-wide interventions rather than focusing on isolated areas. A combination of public safety initiatives, housing improvements, and community programs would be essential for addressing crime across the borough.
+
+Staten Island stands out with the lowest number of incidents among the five boroughs. Most CDTAs report fewer than 50 incidents, with one area as an exception, exceeding 200 incidents. This aligns with Staten Island's suburban and less densely populated character, which likely contributes to its lower crime rates. Maintaining this safety level requires continued focus on community engagement and ensuring sufficient resources are available to address any emerging hotspots.
 
 ## Statistical analysis
 ## Method for Calculating Correlation Coefficients
