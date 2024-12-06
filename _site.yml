@@ -1,4 +1,4 @@
-name: "NYC shooting incidents analysis"
+name: "NYC Shooting Incidents Analysis"
 output_dir: "."
 navbar:
   title: "Home"
