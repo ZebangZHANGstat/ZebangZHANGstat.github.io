@@ -58,62 +58,348 @@ Our project focuses on examining the socioeconomic and temporal factors that inf
    - Are higher poverty levels associated with an increased frequency of shootings?
 
 
-## Data Sources and Cleaning
 
-In this section, describe the data sources, cleaning process, and the methods used to explore the research questions.
+## Data source
 
-### Data source
-
-#### Original data
+### Original data
 
 This report analyzes shooting incidents in NYC. You can find the original data before merging [here](https://data.cityofnewyork.us/Public-Safety/NYPD-Shooting-Incident-Data-Historic-/833y-fsy8/about_data). This data is from NYCOpenData, consists some basic information: occur time, coordinate of each incident, victim's information, .etc. 
 
-#### data for additional information
+### data for additional information
 
-##### NTA shape data
+* NTA shape data
 
 Neighborhood Tabulation Areas (NTAs) are medium-sized statistical geographies for reporting Decennial Census and American Community Survey. NTAs were delineated with the need for both geographic specificity and statistical reliability in mind. Shapefile of NTA is get from NYC Planning website, you can find the data [here](https://www.nyc.gov/site/planning/data-maps/open-data/census-download-metadata.page), or you can [download](https://s-media.nyc.gov/agencies/dcp/assets/files/zip/data-tools/bytes/nynta2020_24d.zip)
 
-##### CDTA data
+* CDTA data
 
 The Department of City Planning (DCP) created Community District Tabulation Areas (CDTAs) to closely approximate the 59 Community Districts of New York City for the purpose of reporting American Community Survey (ACS) data. You can find the data [here](https://www.nyc.gov/site/planning/data-maps/open-data/census-download-metadata.page), or you can [download](https://s-media.nyc.gov/agencies/dcp/assets/files/zip/data-tools/bytes/nycdta2020_24d.zip)
 
-##### Borough Boundaries data
+* Borough Boundaries data
 
 The Borough Boundaries dataset from the NYC Open Data portal provides detailed information about the geographical boundaries of the five boroughs of New York City: Bronx, Brooklyn, Manhattan, Queens, and Staten Island. You can find the data [here](https://data.cityofnewyork.us/City-Government/Borough-Boundaries/tqmj-j8zm)
 
-##### Neighborhood data
+* Neighborhood data
 
 [Here](https://data.insideairbnb.com/united-states/ny/new-york-city/2024-09-04/visualisations/neighbourhoods.csv) is neighbourhood list for geo filter. Sourced from city or open source GIS files. [Here](https://data.insideairbnb.com/united-states/ny/new-york-city/2024-09-04/visualisations/neighbourhoods.geojson) is GeoJSON file of neighbourhoods of the city.
 
-##### Education data
+* Education data
 
 The data source for education is shown [here](https://a816-dohbesp.nyc.gov/IndicatorPublic/data-explorer/social-conditions/?id=2334#display=summary).
 
-##### Poverty data
+* Poverty data
 
 The data source for poverty is [here](https://a816-dohbesp.nyc.gov/IndicatorPublic/data-explorer/economic-conditions/?id=103#display=summary)
 
 
-### Data processing
+## Data processing
+```{r, include=FALSE}
+library(sf)
+library(dplyr)
+library(readr)
+library(stringr)
+library(lubridate)
+library(timeDate)
+library(suncalc)
+library(purrr)
+library(readxl)
+library(tidyverse)
 
+```
 The original [data](https://data.cityofnewyork.us/Public-Safety/NYPD-Shooting-Incident-Data-Historic-/833y-fsy8/about_data) only consists of some basic information and doesn’t show NTA, CDTA, Borough and neighborhood information of each incident, so we added these information to the original data base on the coordinate of each incident, we also add some demographic information: population, education level, poverty level, .etc to the data.
 
 Here's how we added the information based on all the data we have:
 
-* enrich NYC shooting incident data with neighborhood-level information by performing spatial operations, converts the shooting data into a spatial format, joins it with neighborhood boundaries, and adds additional neighborhood attributes for deeper spatial analysis.
+* enrich NYC shooting incident data with neighborhood-level information by performing spatial operations, converts the shooting data into a spatial format, joins it with neighborhood boundaries, and adds additional neighborhood attributes for deeper spatial analysis. 
+<details>
+  <summary>detailed code</summary>
+
+  ```r
+  df=read_csv("./data/NYPD_Shooting_Incident_Data__Historic__20241119.csv")
+
+  # Ensure coordinate columns are numeric
+  df = df %>%
+    mutate(
+      X_COORD_CD = as.numeric(X_COORD_CD),
+      Y_COORD_CD = as.numeric(Y_COORD_CD)
+    )
+
+  # Convert to sf object with CRS EPSG:2263
+  df_sf = st_as_sf(df, coords = c("X_COORD_CD", "Y_COORD_CD"), crs = 2263)
+
+  # Download and read the GeoJSON file
+  download.file(
+    url = "https://data.insideairbnb.com/united-states/ny/new-york-city/2024-09-04/visualisations/neighbourhoods.geojson",
+    destfile = "neighbourhoods.geojson",
+    mode = "wb"
+  )
+  neighbourhoods = st_read("neighbourhoods.geojson")
+
+  # Check and transform CRS of neighborhoods
+  if (st_crs(neighbourhoods)$epsg != 2263) {
+    neighbourhoods = st_transform(neighbourhoods, crs = 2263)
+  }
+
+  # Perform the spatial join
+  df_joined = st_join(df_sf, neighbourhoods, left = TRUE)
+
+  # Add neighborhood information to the data frame
+  df$Neighborhood = df_joined$neighbourhood
+  # Download and use the neighborhoods CSV file
+  download.file(
+    url = "https://data.insideairbnb.com/united-states/ny/new-york-city/2024-09-04/visualisations/neighbourhoods.csv",
+    destfile = "neighbourhoods.csv",
+    mode = "wb"
+  )
+  neighborhoods_csv = read_csv("neighbourhoods.csv")
+
+  # Merge additional attributes if necessary
+  df = df %>%
+    left_join(neighborhoods_csv, by = c("Neighborhood" = "neighbourhood"))
+  ```
+
+</details>
 
 * enrich NYC shooting incident data with neighborhood-level information by performing spatial operations, converts the shooting data into a spatial format, joins it with neighborhood boundaries (both 2020 and 2010 shapefiles), and adds additional neighborhood attributes for deeper spatial analysis.
+<details>
+  <summary>detailed code</summary>
+
+  ```r
+  df$X_COORD_CD <- as.numeric(df$X_COORD_CD)
+  df$Y_COORD_CD <- as.numeric(df$Y_COORD_CD)
+
+  # Convert to sf object
+  df_sf <- st_as_sf(df, coords = c("X_COORD_CD", "Y_COORD_CD"), crs = 2263)
+
+  # Read neighborhood shapefile
+  nta <- st_read("./data/nynta2020_24d/nynta2020.shp")
+
+  # Transform CRS if necessary
+  nta <- st_transform(nta, crs = st_crs(df_sf))
+
+  # Perform spatial join
+  df_joined <- st_join(df_sf, nta, left = TRUE)
+
+  # Add neighborhood information to your original data frame
+  df$NTA <- df_joined$NTAName  # Adjust based on actual column name
+
+  ## add 2010 nta data
+  df$X_COORD_CD <- as.numeric(df$X_COORD_CD)
+  df$Y_COORD_CD <- as.numeric(df$Y_COORD_CD)
+
+  # Convert to sf object
+  df_sf <- st_as_sf(df, coords = c("X_COORD_CD", "Y_COORD_CD"), crs = 2263)
+
+  # Read neighborhood shapefile
+  neighborhoods_2010 <- st_read("./data/nynta2010_24d/nynta2010.shp")
+
+  # Transform CRS if necessary
+  neighborhoods_2010 <- st_transform(neighborhoods_2010, crs = st_crs(df_sf))
+
+  # Perform spatial join
+  df_joined <- st_join(df_sf, neighborhoods_2010, left = TRUE)
+  # Add neighborhood information to your original data frame
+  df$NTA_2010 <- df_joined$NTAName  # Adjust based on actual column name
+  ```
+
+</details>
 
 * using the `holidayNYSE()` function to determine which dates are public holidays
+<details>
+  <summary>detailed code</summary>
+
+  ```r
+  df$OCCUR_DATE <- as.Date(df$OCCUR_DATE, format = "%m/%d/%Y")
+
+  # Define the range of years, handling NA values
+  years <- seq(
+    year(min(df$OCCUR_DATE, na.rm = TRUE)),
+    year(max(df$OCCUR_DATE, na.rm = TRUE)),
+    by = 1
+  )
+  us_holidays = holidayNYSE(years)
+  us_holidays = as.Date(us_holidays)
+  # Add a new column indicating whether the date is a holiday, year and month information of a date
+  df = df %>%
+    mutate(
+      Is_Holiday = OCCUR_DATE %in% us_holidays,
+      Year = year(OCCUR_DATE),
+      Month = month(OCCUR_DATE)
+    )
+  ```
+
+</details>
+
 
 * calculates dawn and dusk times for each unique date in the dataset. Using NYC's coordinates (`latitude` and `longitude`), the `getSunlightTimes()` function generates dawn and dusk times for each day
+<details>
+  <summary>detailed code</summary>
+
+  ```r
+  df$OCCUR_DATE <- as.character(df$OCCUR_DATE)
+  df$OCCUR_TIME <- as.character(df$OCCUR_TIME)
+
+  # Combine OCCUR_DATE and OCCUR_TIME into a single datetime string
+  datetime_str <- paste(df$OCCUR_DATE, df$OCCUR_TIME)
+
+  # Parse datetime using lubridate
+  df$OCCUR_DATETIME <- ymd_hms(datetime_str, tz = "America/New_York")
+  # Extract date from OCCUR_DATETIME
+  df$DATE <- as.Date(df$OCCUR_DATETIME)
+
+  # Get unique dates
+  unique_dates <- unique(df$DATE)
+  latitude <- 40.7128
+  longitude <- -74.0060
+  # Calculate dawn and dusk times
+  sun_times <- getSunlightTimes(
+    date = unique_dates,
+    lat = latitude,
+    lon = longitude,
+    keep = c("dawn", "dusk"),
+    tz = "America/New_York"
+  )
+
+  # Merge with the original dataframe
+  df <- df %>%
+    left_join(sun_times[, c("date", "dawn", "dusk")], by = c("DATE" = "date"))
+
+  # Determine if the sky is dark considering twilight
+  df <- df %>%
+    mutate(
+      Sky_Is_Dark = OCCUR_DATETIME < dawn | OCCUR_DATETIME >= dusk
+    )
+  df <- df %>%
+    select(-DATE, -dawn, -dusk)
+  ```
+
+</details>
 
 * reads in population data from an Excel file, filters relevant rows, selects specific columns, and merges this population data with the original dataset. 
+<details>
+  <summary>detailed code</summary>
 
-* filters the poverty and education data for the relevant time period (2017-21) and geographic type (`NTA2020`), selects specific columns, and merges this poverty data with the shooting incident dataset. 
+  ```r
+  popu <- suppressWarnings(
+    read_excel("./data/nyc_detailed-race-and-ethnicity-data_2020_core-geographies.xlsx", 
+               sheet = 1,
+               range = "A4:I2599",
+               col_types = c("numeric", "text", "text", "text", "numeric", "text", "text", "numeric", "numeric")) |>
+      filter(`Orig Order` >= 2334 & `Orig Order` <= 2595) |>
+      select(GeoName, NTAType, Pop) |>
+      rename(Total_population = Pop)
+  )
+
+  df <- df |>
+    left_join(popu, by = c("NTA" = "GeoName")) |>
+    mutate(
+      NTAType = case_when(
+        NTAType == 0 ~ "Residential",
+        NTAType == 9 ~ "Park",
+        NTAType == 8 ~ "Airport",
+        NTAType == 7 ~ "Cemetery",
+        NTAType == 6 ~ "Other Special Areas",
+        NTAType == 5 ~ "Rikers Island",
+        is.na(NTAType) ~ "Unknown")
+    )
+  ```
+
+</details>
+
+* add CDTA data similar to NTA
+<details>
+  <summary>detailed code</summary>
+
+  ```r
+  df$X_COORD_CD <- as.numeric(df$X_COORD_CD)
+  df$Y_COORD_CD <- as.numeric(df$Y_COORD_CD)
+
+  df_sf <- st_as_sf(df, coords = c("X_COORD_CD", "Y_COORD_CD"), crs = 2263)
+
+  cdta <- st_read("./data/nycdta2020_24d/nycdta2020.shp")
+
+  cdta <- st_transform(cdta, crs = st_crs(df_sf))
+
+  df_joined <- st_join(df_sf, cdta, left = TRUE)
+
+  df$CDTA <- df_joined$CDTA2020
+
+  df$CDTA <- gsub("([A-Z]{2})(\d{2})", "\1 \2", df$CDTA)
+  ```
+
+</details>
+
+* filters the poverty and education data for the relevant time period (2017-21) and geographic type (`NTA2020`), selects specific columns, and merges this poverty data with the shooting incident dataset.
+<details>
+  <summary>detailed code</summary>
+
+  ```r
+  neighborhood_poverty <- read.csv("./data/neighborhood_poverty.csv")
+
+  # Select specific columns from neighborhood_poverty
+  neighborhood_poverty_selected <- neighborhood_poverty %>% 
+    filter(TimePeriod == '2017-21') %>% 
+    filter(GeoType == 'NTA2020' ) %>% 
+    select(Number, Percent, Geography)
+  # Merge the dataframes on 'NTA' and 'Geography', keeping all information from data_processing
+  df_poverty <- left_join(df, neighborhood_poverty_selected, by = c("NTA" = "Geography"))
+
+  # Rename columns after merging
+  df_poverty <- df_poverty %>% 
+    rename(Number_poverty = Number, Percent_poverty = Percent)
+  neighborhood_education = read.csv("./data/graduated_high_school.csv")
+  neighborhood_education_selected <- neighborhood_education %>% 
+    filter(TimePeriod == '2017-21') %>% 
+    filter(GeoType == 'NTA2020' ) %>% 
+    select(Number, Percent, Geography)
+  # Merge the dataframes on 'NTA' and 'Geography', keeping all information from data_processing
+  df_education <- left_join(df_poverty, neighborhood_education_selected, by = c("NTA" = "Geography"))
+
+  # Rename columns after merging
+  df_education <- df_education %>% 
+    rename(Number_education = Number, Percent_education = Percent)
+  # filter between 2017 and 2023
+  df_education$OCCUR_DATE <- as.Date(df_education$OCCUR_DATE, format = "%Y-%m-%d")
+
+  # Filter the incidents that happened between 2017 and 2023
+  df_education <- df_education %>% 
+    filter(OCCUR_DATE >= as.Date("2017-01-01") & OCCUR_DATE <= as.Date("2023-12-31"))
+  ```
+
+</details>
 
 * calculates shooting incident rates for both Neighborhood Tabulation Areas (NTAs) and boroughs by year.
+<details>
+  <summary>detailed code</summary>
+
+  ```r
+  #add a column that shows the shooting incident rate of NTAs in that year
+  df_education <- df_education %>%
+    group_by(NTA, Year) %>%
+    mutate(incident_rate_by_year_nta = (n() / Total_population)*100) %>%
+    ungroup()
+
+  #add a column that shows the shooting incident rate of boroughs in that year
+  boro_population <- df_education %>%
+    group_by(BORO, Year) %>%
+    summarise(total_population_boro = sum(Total_population, na.rm = TRUE)) %>%
+    ungroup()
+
+  df_education <- df_education %>%
+    left_join(boro_population, by = c("BORO", "Year")) %>%
+    group_by(BORO, Year) %>%
+    mutate(incident_rate_by_year_boro = (n() / total_population_boro)*100) %>%
+    ungroup()
+
+  #Rename a column
+  df_education <- df_education %>%
+    rename(Total_population_nta = Total_population)
+
+  write.csv(df_education, "data_final.csv", row.names = FALSE)
+  ```
+
+</details>
+
 
 The detailed code is [here](data_processing.html)
 
