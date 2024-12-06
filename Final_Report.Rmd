@@ -409,36 +409,6 @@ Here's how we added the information based on all the data we have:
 
 The detailed code is [here](data_processing.html)
 
-#### Neighborhood Poverty
-```{r}
-neighborhood_poverty <- read.csv("./data/neighborhood_poverty.csv")
-
-# Select specific columns from neighborhood_poverty
-neighborhood_poverty_selected <- neighborhood_poverty %>% 
-  filter(TimePeriod == '2017-21') %>% 
-  filter(GeoType == 'NTA2020' ) %>% 
-  select(Number, Percent, Geography)
-
-```
-
-* Downloaded the full table from the NYC Environment and Health Data Portal
-* Filtered to include only percent data from 2017-2021 for each NTA 
-* Describes estimated percentage of people whose annual income falls below 100% of the federal poverty level in each NTA
-
-#### Graduated High School
-```{r}
-neighborhood_education=read.csv("./data/graduated_high_school.csv")
-neighborhood_education_selected <- neighborhood_education %>% 
-  filter(TimePeriod == '2017-21') %>% 
-  filter(GeoType == 'NTA2020' ) %>% 
-  select(Number, Percent, Geography)
-
-```
-
-* Downloaded the full table from the NYC Environment and Health Data Portal
-* Filtered the data to include only the percentage information for high school graduation between 2017 and 2021, focusing on Neighborhood Tabulation Areas (NTAs) as defined by the 2020 census.
-* This dataset describes the estimated percentage of individuals aged 25 and older who completed high school or obtained a high school equivalency in each NTA
-
 ## Exploratory data analysis
 ```{r}
 library(ggplot2)
@@ -474,6 +444,7 @@ ggplot(year_counts, aes(x = Year, y = Count, group = 1)) +
        y = 'Number of Shooting Incidents') +
   theme_minimal()
 ```
+
 The chart shows a stable trend in shooting incidents from 2017 to 2019, followed by a sharp increase in 2020, likely linked to socio-economic factors like the COVID-19 pandemic. Incidents peaked in 2021 and then declined through 2023.
 
 ```{r}
