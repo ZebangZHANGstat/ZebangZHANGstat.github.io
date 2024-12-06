@@ -16,6 +16,10 @@ knitr::opts_chunk$set(
 )
 ```
 
+
+
+
+## Interactive map showing each shooting incident
 ```{r}
 # Load necessary libraries
 library(dplyr)
@@ -61,3 +65,7 @@ plot_ly(data = incidents_filtered,
   )
 
 ```
+
+## Screen cast 
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/6y5CqAHxGX0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
