@@ -1,8 +1,11 @@
 ---
 title: "Poverty/Education VS Incidence Rate"
-author: "Chenhui Yan"
 date: "2024-12-02"
-output: html_document
+output: 
+  html_document:
+    css: bootstrap.min.css
+    self_contained: true
+    code_folding: hide
 runtime: shiny
 ---
 
@@ -31,7 +34,7 @@ data_clean <- read.csv("data_final.csv")
 
 ## Poverty across neighborhoods in NYC
 
-Calculate the correlation between the poverty percentage and the incident rate.
+Calculate the correlation between the poverty percentage and the incident rate in NYC.
 ```{r}
 correlation <- cor(data_clean$incident_rate_by_year_nta, data_clean$Percent_poverty, use = "complete.obs")
 print(paste("Correlation coefficient: ", correlation))
@@ -107,13 +110,13 @@ renderPlotly({
 })
 ```
 
-Some neighborhoods, like East Harlem (North), East Harlem (South), and Chinatown-Two Bridges, seem to have both higher poverty percentages and higher incident rates, suggesting a more direct connection between poverty and incidents.
+In Manhatten, some neighborhoods, like East Harlem (North), East Harlem (South), and Chinatown-Two Bridges, seem to have both higher poverty percentages and higher incident rates, suggesting a more direct connection between poverty and incidents.
 
-Brownsville, which has a high poverty rate (between 30-50%), also has some of the highest incident rates in Brooklyn, indicating that poverty may significantly impact incident rates in this neighborhood.
+In Brooklyn, Brownsville, which has a high poverty rate (between 30-50%), also has some of the highest incident rates, indicating that poverty may significantly impact incident rates in this neighborhood.
 
-Claremont Village-Claremont (East) and Fordham Heights seem to have higher incident rates compared to other neighborhoods with similar poverty levels
+In Bronx, Claremont Village-Claremont (East) and Fordham Heights seem to have higher incident rates compared to other neighborhoods with similar poverty levels
 
-Corona and East Elmhurst show relatively high incident rates, particularly compared to neighborhoods with similar poverty percentages. 
+In Queens, Corona and East Elmhurst show relatively high incident rates, particularly compared to neighborhoods with similar poverty percentages. 
 
 In Staten Island, the relationship between poverty and incident rates is less pronounced compared to other boroughs. 
 
@@ -207,12 +210,12 @@ renderPlotly({
 })
 ```
 
-There is no clear linear trend between high school graduation rates and incident rates in Manhattan. The distribution of points suggests a weak negative correlation overall.East Harlem (North and South) and Chinatown-Two Bridges appear to have both lower high school graduation rates and higher incident rates. This suggests that in these neighborhoods, lower educational attainment may be correlated with higher vulnerability.
+In Manhatten, there is no clear linear trend between high school graduation rates and incident rates. The distribution of points suggests a weak negative correlation overall.East Harlem (North and South) and Chinatown-Two Bridges appear to have both lower high school graduation rates and higher incident rates. This suggests that in these neighborhoods, lower educational attainment may be correlated with higher vulnerability.
 
-Brownsville and East Flatbush are notable for having both low educational attainment and high incident rates, indicating a relationship between these two variables.
+In Brooklyn, Brownsville and East Flatbush are notable for having both low educational attainment and high incident rates, indicating a relationship between these two variables.
 
-Co-op City and Morris Park are examples of neighborhoods with higher graduation rates and lower incident rates. This may suggest that neighborhoods with better educational attainment benefit from lower rates of incidents.
+In Bronx, Co-op City and Morris Park are examples of neighborhoods with higher graduation rates and lower incident rates. This may suggest that neighborhoods with better educational attainment benefit from lower rates of incidents.
 
-Far Rockaway-Bayswater and Corona tend to have both lower educational attainment and higher incident rates.
+In Queens, Far Rockaway-Bayswater and Corona tend to have both lower educational attainment and higher incident rates.
 
-Neighborhoods with higher percentages of high school graduates (above 15%) generally have incident rates below 0.02.Port Richmond and St. George-New Brighton are notable for having higher incident rates compared to other neighborhoods with similar graduation rates.
+In staten Island, neighborhoods with higher percentages of high school graduates (above 15%) generally have incident rates below 0.02.Port Richmond and St. George-New Brighton are notable for having higher incident rates compared to other neighborhoods with similar graduation rates.
