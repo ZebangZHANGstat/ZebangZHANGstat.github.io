@@ -7,7 +7,6 @@ output:
     toc_float: true
 ---
 
-Welcome!
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
@@ -16,10 +15,14 @@ knitr::opts_chunk$set(
 )
 ```
 
+Welcome to the NYC Shooting Incident Report website. This platform provides a comprehensive [analysis](Final_Report.html) of shooting incidents across New York City from 2017 to 2023. Using data-driven insights, we explore [spatial, temporal](descriptive_statistics.html), [social-economic patterns](Poverty_Education.html) behind these incidents, aiming to enhance public understanding and support policy-making for a safer city. Navigate through our interactive visualizations to understand how factors like neighborhood characteristics, poverty rates, and time of day influence shooting trends across NYC.
 
 
 
-## Interactive map showing each shooting incident
+## See all shooting incident in NYC (2017-2023) on a map!
+
+Hover over each point on the map to learn more about the coordinate and NTA(Neighborhood Tabulation Areas) of each incident, you can also know the time and whether the sky is dark at that incident time.
+
 ```{r}
 # Load necessary libraries
 library(dplyr)
@@ -65,6 +68,14 @@ plot_ly(data = incidents_filtered,
   )
 
 ```
+
+## Explore more trends:
+
+* see the geographical and temporal [distribution](descriptive_statistics.html)
+
+* is there [association](Poverty_Education.html) between incident rate and economic-education condition?
+
+* see some more flexible [plots](NYC Shooting Incident Shiny Dashboard.Rmd)!
 
 ## Screen cast 
 
