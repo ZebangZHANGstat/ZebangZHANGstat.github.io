@@ -17,6 +17,35 @@ library(readxl)
 library(tidyverse)
 
 ```
+
+# Data source
+
+## Original data
+
+This report analyzes shooting incidents in NYC. You can find the original data before merging [here](https://data.cityofnewyork.us/Public-Safety/NYPD-Shooting-Incident-Data-Historic-/833y-fsy8/about_data). This data is from NYCOpenData, consists some basic information: occur time, coordinate of each incident, victim's information, .etc. 
+
+## data for additional information
+
+### NTA shape data
+
+Neighborhood Tabulation Areas (NTAs) are medium-sized statistical geographies for reporting Decennial Census and American Community Survey. NTAs were delineated with the need for both geographic specificity and statistical reliability in mind. Shapefile of NTA is get from NYC Planning website, you can find the data [here](https://www.nyc.gov/site/planning/data-maps/open-data/census-download-metadata.page), or you can [download](https://s-media.nyc.gov/agencies/dcp/assets/files/zip/data-tools/bytes/nynta2020_24d.zip)
+
+### CDTA data
+
+The Department of City Planning (DCP) created Community District Tabulation Areas (CDTAs) to closely approximate the 59 Community Districts of New York City for the purpose of reporting American Community Survey (ACS) data. You can find the data [here](https://www.nyc.gov/site/planning/data-maps/open-data/census-download-metadata.page), or you can [download](https://s-media.nyc.gov/agencies/dcp/assets/files/zip/data-tools/bytes/nycdta2020_24d.zip)
+
+### Neighborhood data
+
+[Here](https://data.insideairbnb.com/united-states/ny/new-york-city/2024-09-04/visualisations/neighbourhoods.csv) is neighbourhood list for geo filter. Sourced from city or open source GIS files. [Here](https://data.insideairbnb.com/united-states/ny/new-york-city/2024-09-04/visualisations/neighbourhoods.geojson) is GeoJSON file of neighbourhoods of the city.
+
+### Education data
+
+The data source for education is shown [here](https://a816-dohbesp.nyc.gov/IndicatorPublic/data-explorer/social-conditions/?id=2334#display=summary).
+
+### Poverty data
+
+The data source for poverty is [here](https://a816-dohbesp.nyc.gov/IndicatorPublic/data-explorer/economic-conditions/?id=103#display=summary)
+
 # This part focus on data cleaning, tidying and merging.
 ## adding neighborhood information to the shooting dataset
 ```{r, message=FALSE}
