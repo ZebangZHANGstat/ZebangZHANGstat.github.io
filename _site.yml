@@ -11,6 +11,8 @@ navbar:
       href: https://zz3309.shinyapps.io/poverty_education/
     - text: "Shiny App"
       href: https://zz3309.shinyapps.io/nyc_shooting_incident_shiny_dashboard/
+    - text: "Report"
+      href: Final_Report.html
     - icon: fa-envelope fa-lg
       href: mailto:<zz3309@cumc.columbia.edu>
     - icon: fa-github fa-lg
