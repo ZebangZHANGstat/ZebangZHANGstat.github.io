@@ -1,0 +1,245 @@
+---
+title: "Project Report"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    theme: sandstone
+    code_folding: hide
+---
+
+```{r}
+library(tidyverse)
+library(plotly)
+library(shiny)
+library(flexdashboard)
+library(viridis)
+```
+
+```{r}
+data_clean <- read.csv("data_final.csv")
+```
+
+
+**Project Name:** *Examining Demographic Patterns in NYC Shooting Data*
+
+**Project Members:** Chenhui Yan (CY2772), Zhaokun Lin (ZL3544), Mingyin Wang (AW3693), Zebang Zhang (ZZ3309)
+
+## Topic
+
+In this exploratory study, we aim to analyze the geographic and temporal distribution of shootings in New York City, with an emphasis on how socioeconomic factors influence these patterns.
+
+## Motivation
+
+Understanding the dynamics of shooting incidents in New York City is crucial for enhancing public safety and fostering resilient communities. By examining demographic patterns in shooting crime data alongside datasets on high school graduation rates and poverty levels, our project aims to identify the socioeconomic factors that influence gun violence. Analyzing how disparities in education and income relate to shooting incidents provides valuable insights for targeted interventions.
+
+## Significance
+
+This research will aid in informing targeted public health and safety interventions by identifying the communities most impacted by shootings. Understanding these patterns will enable policymakers to implement more effective violence prevention measures and allocate resources where they are needed the most.
+
+## Research Questions
+
+Our project focuses on examining the socioeconomic and temporal factors that influence gun violence in New York City. Specifically, we aim to answer the following questions:
+
+ **Geographic and Temporal Patterns of Shootings in NYC**:
+   - How are shooting incidents distributed geographically across different boroughs and neighborhoods in New York City?
+   - What are the temporal patterns of shootings (e.g., month, season, time of day) in different areas of NYC?
+
+ **Education and Gun Violence**:
+   - Is there an association between high school graduation rates and the prevalence of shootings across NYC neighborhoods?
+   - Are neighborhoods with lower high school graduation rates more likely to experience higher rates of gun violence?
+
+ **Poverty and Gun Violence**:
+   - How does the percentage of people living below the poverty line relate to shooting incidents across neighborhoods in NYC?
+   - Are higher poverty levels associated with an increased frequency of shootings?
+
+
+## Data Sources and Cleaning
+
+In this section, describe the data sources, cleaning process, and the methods used to explore the research questions.
+
+```{r}
+
+```
+
+### Neighborhood Poverty
+```{r}
+neighborhood_poverty <- read.csv("./data/neighborhood_poverty.csv")
+
+# Select specific columns from neighborhood_poverty
+neighborhood_poverty_selected <- neighborhood_poverty %>% 
+  filter(TimePeriod == '2017-21') %>% 
+  filter(GeoType == 'NTA2020' ) %>% 
+  select(Number, Percent, Geography)
+
+```
+
+* Downloaded the full table from the NYC Environment and Health Data Portal
+* Filtered to include only percent data from 2017-2021 for each NTA 
+* Describes estimated percentage of people whose annual income falls below 100% of the federal poverty level in each NTA
+
+### Graduated High School
+```{r}
+neighborhood_education=read.csv("./data/graduated_high_school.csv")
+neighborhood_education_selected <- neighborhood_education %>% 
+  filter(TimePeriod == '2017-21') %>% 
+  filter(GeoType == 'NTA2020' ) %>% 
+  select(Number, Percent, Geography)
+
+```
+
+* Downloaded the full table from the NYC Environment and Health Data Portal
+* Filtered the data to include only the percentage information for high school graduation between 2017 and 2021, focusing on Neighborhood Tabulation Areas (NTAs) as defined by the 2020 census.
+* This dataset describes the estimated percentage of individuals aged 25 and older who completed high school or obtained a high school equivalency in each NTA
+
+## Exploratory data analysis
+```{r}
+
+```
+
+## Maps
+```{r}
+
+```
+
+## Statistical analysis
+## Method for Calculating Correlation Coefficients
+To assess potential linear relationships between socioeconomic variables and shooting rates, correlation coefficients were calculated. Specifically, the relationship between poverty rates and shooting rates, as well as between the percentage of high school graduates and shooting rates, was explored across different neighborhoods in NYC.
+
+### Poverty
+
+Calculate the correlation between the poverty percentage and the incident rate.
+```{r}
+correlation <- cor(data_clean$incident_rate_by_year_nta, data_clean$Percent_poverty, use = "complete.obs")
+print(paste("Correlation coefficient: ", correlation))
+```
+
+```{r}
+
+data_clean %>%
+  plot_ly(x = ~Percent_poverty, y = ~incident_rate_by_year_nta, 
+          color = ~NTA, colors = "viridis", 
+          type = "scatter", mode = "markers",
+          text = ~paste("Neighborhood: ", NTA, "<br>Borough: ", BORO, 
+                        "<br>% Below Poverty Line: ", Percent_poverty, 
+                        "<br>Incident Rate: ", incident_rate_by_year_nta)) %>%
+  layout(title = "Percent Below the Poverty Line and Incident Rate in NYC",
+         xaxis = list(title = 'Percentage of People Whose Income is Below the Poverty Line'),
+         yaxis = list(title = 'Incident Rate'),
+         legend = list(title = list(text = 'Neighborhood')))
+```
+```{r}
+# Scatter plot for Brooklyn
+data_clean |> 
+  filter(neighbourhood_group == "Brooklyn") |> 
+  plot_ly(data = _, x = ~Percent_poverty, y = ~incident_rate_by_year_nta, 
+          color = ~NTA,
+          colors = "plasma", 
+          type = "scatter",
+          mode = "markers",
+          text = ~paste("Neighborhood: ", NTA, "<br>Borough: ", neighbourhood_group, 
+                        "<br>% Below Poverty Line: ", Percent_poverty, 
+                        "<br>Incident Rate: ", incident_rate_by_year_nta)) |> 
+    layout(title = "Percent Below the Poverty Line and Incident Rate in Brooklyn",
+           xaxis = list(title = 'Percentage of People Whose Income is Below the Poverty Line'),
+           yaxis = list(title = 'Incident Rate'),
+           legend = list(title = list(text = 'Neighborhood')))
+
+```
+
+```{r}
+# Scatter plot for Staten Island
+data_clean |> 
+  filter(neighbourhood_group == "Staten Island") |> 
+  plot_ly(data = _, x = ~Percent_poverty, y = ~incident_rate_by_year_nta, 
+          color = ~NTA,
+          colors = "inferno", 
+          type = "scatter",
+          mode = "markers",
+          text = ~paste("Neighborhood: ", NTA, "<br>Borough: ", neighbourhood_group, 
+                        "<br>% Below Poverty Line: ", Percent_poverty, 
+                        "<br>Incident Rate: ", incident_rate_by_year_nta)) |> 
+    layout(title = "Percent Below the Poverty Line and Incident Rate in Staten Island",
+           xaxis = list(title = 'Percentage of People Whose Income is Below the Poverty Line'),
+           yaxis = list(title = 'Incident Rate'),
+           legend = list(title = list(text = 'Neighborhood')))
+
+```
+
+* Across all neighborhoods in NYC, there is a moderate positive linear relationship between the percentage of people below the poverty line (Percent_poverty) and the incident rate by neighborhood (incident_rate_by_year_nta).(r = 0.508).
+* Associations differ by borough.
+* Notably, Brooklyn (0.5686) and Staten Island (0.5576) show the highest correlations, suggesting that the relationship between poverty and incident rate is stronger in these boroughs.
+
+### Education
+
+Calculate the correlation between the graduated in highschool percentage and the incident rate
+```{r}
+# Calculate the correlation between the graduated in highschool percentage and the incident rate
+correlation <- cor(data_clean$incident_rate_by_year_nta, data_clean$Percent_education, use = "complete.obs")
+print(paste("Correlation coefficient: ", correlation))
+
+```
+
+```{r}
+# Create a scatter plot to visualize the relationship
+data_clean %>%
+  plot_ly(x = ~Percent_education, y = ~incident_rate_by_year_nta, 
+          color = ~NTA, colors = "viridis", 
+          type = "scatter", mode = "markers",
+          text = ~paste("Neighborhood: ", NTA, "<br>Borough: ", BORO, 
+                        "<br>% graduated HS: ", Percent_education, 
+                        "<br>Incident Rate: ", incident_rate_by_year_nta)) %>%
+  layout(title = "Percent graduated high school and Incident Rate in NYC",
+         xaxis = list(title = 'Percentage of People graduated in high school'),
+         yaxis = list(title = 'Incident Rate'),
+         legend = list(title = list(text = 'Neighborhood')))
+```
+
+```{r}
+# Scatter plot for The Bronx
+data_clean |> 
+  filter(neighbourhood_group == "Bronx") |>
+  plot_ly(data = _, x = ~Percent_poverty, y = ~incident_rate_by_year_nta, 
+          color = ~NTA,
+          colors = "magma", 
+          type = "scatter",
+          mode = "markers",
+          text = ~paste("Neighborhood: ", NTA, "<br>Borough: ", neighbourhood_group, 
+                        "<br>% graduated HS: ", Percent_education, 
+                        "<br>Incident Rate: ", incident_rate_by_year_nta)) |> 
+   layout(title = "Percent graduated high school and Incident Rate in The Bronx",
+           xaxis = list(title = 'Percentage of People graduated in high school'),
+           yaxis = list(title = 'Incident Rate'),
+           legend = list(title = list(text = 'Neighborhood')))
+
+
+```
+
+```{r}
+# Scatter plot for Staten Island
+data_clean |> 
+  filter(neighbourhood_group == "Staten Island") |>
+  plot_ly(data = _, x = ~Percent_poverty, y = ~incident_rate_by_year_nta, 
+          color = ~NTA,
+          colors = "inferno", 
+          type = "scatter",
+          mode = "markers",
+          text = ~paste("Neighborhood: ", NTA, "<br>Borough: ", neighbourhood_group, 
+                        "<br>% graduated HS: ", Percent_education, 
+                        "<br>Incident Rate: ", incident_rate_by_year_nta)) |> 
+   layout(title = "Percent graduated high school and Incident Rate in Staten Island",
+           xaxis = list(title = 'Percentage of People graduated in Staten Island'),
+           yaxis = list(title = 'Incident Rate'),
+           legend = list(title = list(text = 'Neighborhood')))
+
+```
+
+The correlation coefficient is -0.2748, indicating a negative relationship between the percentage of people who graduated from high school and the incident rate. This means that there is a tendency for higher education levels to be associated with lower incident rates
+* Across all neighborhoods in NYC,there is no clear linear trend between high school graduation rates and incident rates in Manhattan.
+* Associations differ by borough.
+* Notably, The Bronx (-0.3996) and Staten Island (-0.6452) show the highest correlations, suggesting that the relationship between percentage of people who graduated from high school and incident rate is stronger in these boroughs.
+
+## Discussion
+
+## Limitations
+
