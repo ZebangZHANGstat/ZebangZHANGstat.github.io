@@ -601,7 +601,7 @@ top_10_nta_incident_rate_staten <- top_10_incident_rate_staten %>%
 kable(top_10_nta_incident_rate_staten, digits = 6, caption = "Top 10 NTAs with the Highest Incident Rate by Year in STATEN ISLAND")
 ```
 
-### CDTA Incidents in each Boroughs from 2017 to 2023
+### Number of Incidents counted by CDTAs in each Boroughs from 2017 to 2023
 ```{r}
 boroughs <- unique(cdta_map_data$BoroName)
 for (b in boroughs) {
@@ -609,9 +609,9 @@ for (b in boroughs) {
         filter(BoroName == b)
     plot <- ggplot(data = borough_data) +
         geom_sf(aes(fill = Number_of_Incidents), color = "black") +
-      geom_sf_text(aes(label = Number_of_Incidents), size = 3, color = "white") +  # Add labels
+      geom_sf_text(aes(label = Number_of_Incidents), size = 3, color = "black") +  # Add labels
         scale_fill_gradientn(
-      colors = c("blue", "green", "yellow", "red"), # Custom color scale
+      colors = c( "green", "yellow", "red"), # Custom color scale
       name = "Number of Incidents"
     ) +
         labs(
