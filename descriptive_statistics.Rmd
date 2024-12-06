@@ -31,7 +31,9 @@ library(tidyr)
 df_descriptive=read_csv("data_final.csv")
 data_final <- read_csv("data_final.csv")
 ```
-## time
+## Plots that are related to Time
+
+### Shooting Incidents by Year in NYC
 
 ```{r}
 # Grouping the data by year to count the number of incidents
@@ -53,7 +55,7 @@ ggplot(year_counts, aes(x = Year, y = Count, group = 1)) +
 
 The chart shows a stable trend in shooting incidents from 2017 to 2019, followed by a sharp increase in 2020, likely linked to socio-economic factors like the COVID-19 pandemic. Incidents peaked in 2021 and then declined through 2023.
 
-
+### Bar Chart of Shooting Incidents by Month in NYC
 ```{r}
 # Grouping the data by month
 df_descriptive$Month <- as.factor(df_descriptive$Month)
@@ -72,6 +74,8 @@ ggplot(month_counts, aes(x = Month, y = Count)) +
 
 The bar chart shows a seasonal trend in shooting incidents in NYC, with a significant increase during the warmer months, peaking in July (1248 incidents). The highest numbers are seen in June, July, and August, while the lowest are in February (494 incidents) and January (617 incidents), suggesting fewer incidents during colder months. The gradual rise from January to July, followed by a decline towards December, indicates a correlation between warmer weather and increased incidents, potentially due to increased outdoor activities.
 
+
+### Density Plot of Shooting Incident Occurrence Time in NYC
 ```{r}
 # Convert OCCUR_TIME to a proper time format
 df_descriptive$OCCUR_TIME <- format(strptime(df_descriptive$OCCUR_TIME, format = "%H:%M:%S"), "%H:%M:%S")
@@ -89,6 +93,7 @@ ggplot(df_descriptive, aes(x = as.POSIXct(OCCUR_TIME, format = "%H:%M:%S"))) +
 The density plot shows changes in shooting incident trends throughout the day in NYC, with two distinct peaks. The first peak occurs in the late night to early morning hours, and the second peak appears in the evening. The lowest density is observed in the late morning to early afternoon.
 
 
+### 
 ```{r}
 # Bar chart showing the number of TRUE and FALSE in the Sky_Is_Dark variable
 sky_dark_counts <- df_descriptive %>%
@@ -97,15 +102,18 @@ sky_dark_counts <- df_descriptive %>%
 
 ggplot(sky_dark_counts, aes(x = Sky_Is_Dark, y = total_incidents, fill = Sky_Is_Dark)) +
   geom_bar(stat = 'identity') +
-  labs(title = 'Number of Shooting Incidents by Sky Condition (Dark vs. Bright)',
-       x = 'Sky Condition (Dark vs. Bright)',
+  scale_x_discrete(labels = c("FALSE" = "Daytime", "TRUE" = "Nighttime")) + # Update x-axis labels
+  scale_fill_manual(values = c("FALSE" = "skyblue", "TRUE" = "darkblue"),
+                    labels = c("FALSE" = "Daytime", "TRUE" = "Nighttime")) +
+  labs(title = 'Number of Shooting Incidents by the time of a day (Daytime vs. Nigttime)',
+       x = 'Time of a day(Daytime vs. Nigttime)',
        y = 'Number of Shooting Incidents') +
   theme_minimal()
 ```
 
 The number of shooting incidents when the sky was dark is significantly higher than when it was bright. This might indicate that shootings are more likely to occur during nighttime or low visibility conditions. The higher number of incidents during dark conditions could be due to factors such as reduced visibility, higher activity at night, or fewer people around, making it easier for incidents to occur undetected.
 
-## geo
+## EDA sorted by neighborhood
 
 ### Table showing Top 10 total incident NTA in Each Borough
 
@@ -150,11 +158,12 @@ top_10_nta_incident_rate <- top_10_incident_rate %>%
          percent_education = Percent_education)
 
 # Display the table in the desired format
-kable(top_10_nta_incident_rate, digits = 6, caption = "Top 10 NTAs with the Highest Incident Rate by Year in Each Boroug")
+kable(top_10_nta_incident_rate, digits = 6, caption = "Top 10 NTAs with the Highest Incident Rate by Year in Each Borough")
 ```
 
-## victim
-### Plot: Description of Victims
+## EDA related to Victims
+
+### Plot of Description of Male and Female Shooting Victims by Age Group and Race
 
 ```{r}
 # Plot: Description of Victims
@@ -227,9 +236,10 @@ top_10_nta_overall <- df_descriptive %>%
 kable(top_10_nta_overall, digits = 2, caption = "Top 10 NTAs with the Highest Total Shooting Incidents")
 ```
 
-## Process of plotting Boro 
+## Plot Total Number of Incidents Across NYC BOROs (2017-2023)
 
-```{r}
+### Process of data manipulation
+```{r, include=FALSE}
 # Load dataset
 
 cdta_shape = st_read("nycdta2020_24d/nycdta2020.shp")
@@ -300,7 +310,9 @@ plot <- plot %>%
 plot
 ```
 
-## Process of plot CDTA
+The map shows the total number of incidents across NYC boroughs (2017–2023), with each borough represented by a distinct color. A gradient is used to indicate the magnitude of incidents, with darker shades corresponding to higher counts, ranging from 0 to over 3,000 incidents. Each borough is outlined and filled with its respective color, making it easy to distinguish. The legend on the right identifies the boroughs (Bronx, Brooklyn, Manhattan, Queens, Staten Island) and aligns with the color gradient to show the number of incidents. This visualization highlights geographical disparities in incident frequency across the boroughs, aiding in understanding spatial distribution patterns.
+
+## Plot Total Number of Incidents Across NYC CDTAs from 2017 to 2023
 
 ### Removing NA
 
@@ -368,6 +380,8 @@ ggplot(data = cdta_map_data) +
     axis.title.y = element_blank()
   )
 ```
+
+The map shows NYC CDTA incidents (2017–2023) using a gradient from light blue (fewer incidents) to dark green (more incidents), with counts labeled on each district. Dark green areas highlight hotspots, likely in densely populated regions, while lighter blue areas, like Staten Island, show fewer incidents. This visualization helps identify trends and prioritize safety efforts.
 
 
 
