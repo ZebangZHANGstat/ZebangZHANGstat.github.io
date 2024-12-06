@@ -2,10 +2,7 @@
 title: "Poverty/Education VS Incidence Rate"
 author: "Chenhui Yan"
 date: "2024-12-02"
-output: 
-  html_document：
-  code_folding: hide
-  self_contained: true
+output: html_document
 runtime: shiny
 ---
 
