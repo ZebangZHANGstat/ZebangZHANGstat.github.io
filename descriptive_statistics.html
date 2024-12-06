@@ -392,7 +392,7 @@ library(tidyr)</code></pre>
 <pre class="r"><code># Load the dataset
 df_descriptive=read_csv(&quot;data_final.csv&quot;)</code></pre>
 <pre><code>## Rows: 9820 Columns: 40
-## ── Column specification ─────────────────────────
+## ── Column specification ──────────────────────────────────────
 ## Delimiter: &quot;,&quot;
 ## chr  (17): BORO, LOC_OF_OCCUR_DESC, LOC_CLASSFCTN_DESC, LOCATION_DESC, PERP_...
 ## dbl  (15): INCIDENT_KEY, PRECINCT, JURISDICTION_CODE, X_COORD_CD, Y_COORD_CD...
@@ -505,8 +505,8 @@ incident_by_nta_borough &lt;- df_descriptive %&gt;%
   unnest(cols = c(BRONX, BROOKLYN, MANHATTAN, QUEENS, `STATEN ISLAND`)) %&gt;%
   select(row_num, everything())%&gt;%
   slice(1:10)</code></pre>
-<pre><code>## `summarise()` has grouped output by &#39;BORO&#39;. You
-## can override using the `.groups` argument.</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;BORO&#39;. You can override
+## using the `.groups` argument.</code></pre>
 <pre class="r"><code># Display the table in the desired format
 kable(incident_by_nta_borough, caption = &quot;Top 10 NTAs with Total Shooting Incidents in Each Borough (2017-2023)&quot;)</code></pre>
 <table style="width:100%;">
@@ -750,8 +750,8 @@ victim_summary &lt;- df_descriptive %&gt;%
   summarise(total_victims = n()) %&gt;%
   drop_na()</code></pre>
 <pre><code>## `summarise()` has grouped output by &#39;VIC_SEX&#39;,
-## &#39;VIC_AGE_GROUP&#39;. You can override using the
-## `.groups` argument.</code></pre>
+## &#39;VIC_AGE_GROUP&#39;. You can override using the `.groups`
+## argument.</code></pre>
 <pre class="r"><code># Plotting the description of male victims
 ggplot(victim_summary %&gt;% filter(VIC_SEX == &quot;M&quot;), aes(x = VIC_AGE_GROUP, y = total_victims, fill = VIC_RACE)) +
   geom_bar(stat = &#39;identity&#39;, position = &#39;dodge&#39;) +
@@ -812,8 +812,8 @@ top_10_nta_overall &lt;- df_descriptive %&gt;%
   ungroup() %&gt;%
   slice(1:10) %&gt;%
   select(BORO, NTA, total_incidents, total_population, percent_poverty, percent_education)</code></pre>
-<pre><code>## `summarise()` has grouped output by &#39;BORO&#39;. You
-## can override using the `.groups` argument.</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;BORO&#39;. You can override
+## using the `.groups` argument.</code></pre>
 <pre class="r"><code># Display the table in the desired format
 kable(top_10_nta_overall, digits = 2, caption = &quot;Top 10 NTAs with the Highest Total Shooting Incidents&quot;)</code></pre>
 <table>
@@ -942,8 +942,8 @@ top_10_nta_overall_manhattan &lt;- df_descriptive %&gt;%
   ungroup() %&gt;%
   slice(1:10) %&gt;%
   select(BORO, NTA, total_incidents, total_population, percent_poverty, percent_education)</code></pre>
-<pre><code>## `summarise()` has grouped output by &#39;BORO&#39;. You
-## can override using the `.groups` argument.</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;BORO&#39;. You can override
+## using the `.groups` argument.</code></pre>
 <pre class="r"><code># Display the table in the desired format
 kable(top_10_nta_overall_manhattan, digits = 2, caption = &quot;Top 10 NTAs with the Highest Total Shooting Incidents in MANHATTAN&quot;)</code></pre>
 <table>
@@ -1065,8 +1065,8 @@ top_10_nta_overall_brooklyn &lt;- df_descriptive %&gt;%
   ungroup() %&gt;%
   slice(1:10) %&gt;%
   select(BORO, NTA, total_incidents, total_population, percent_poverty, percent_education)</code></pre>
-<pre><code>## `summarise()` has grouped output by &#39;BORO&#39;. You
-## can override using the `.groups` argument.</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;BORO&#39;. You can override
+## using the `.groups` argument.</code></pre>
 <pre class="r"><code># Display the table in the desired format
 kable(top_10_nta_overall_brooklyn, digits = 2, caption = &quot;Top 10 NTAs with the Highest Total Shooting Incidents in BROOKLYN&quot;)</code></pre>
 <table>
@@ -1188,8 +1188,8 @@ top_10_nta_overall_bronx &lt;- df_descriptive %&gt;%
   ungroup() %&gt;%
   slice(1:10) %&gt;%
   select(BORO, NTA, total_incidents, total_population, percent_poverty, percent_education)</code></pre>
-<pre><code>## `summarise()` has grouped output by &#39;BORO&#39;. You
-## can override using the `.groups` argument.</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;BORO&#39;. You can override
+## using the `.groups` argument.</code></pre>
 <pre class="r"><code># Display the table in the desired format
 kable(top_10_nta_overall_bronx, digits = 2, caption = &quot;Top 10 NTAs with the Highest Total Shooting Incidents in BRONX&quot;)</code></pre>
 <table>
@@ -1311,8 +1311,8 @@ top_10_nta_overall_queens &lt;- df_descriptive %&gt;%
   ungroup() %&gt;%
   slice(1:10) %&gt;%
   select(BORO, NTA, total_incidents, total_population, percent_poverty, percent_education)</code></pre>
-<pre><code>## `summarise()` has grouped output by &#39;BORO&#39;. You
-## can override using the `.groups` argument.</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;BORO&#39;. You can override
+## using the `.groups` argument.</code></pre>
 <pre class="r"><code># Display the table in the desired format
 kable(top_10_nta_overall_queens, digits = 2, caption = &quot;Top 10 NTAs with the Highest Total Shooting Incidents in QUEENS&quot;)</code></pre>
 <table>
@@ -1434,8 +1434,8 @@ top_10_nta_overall_staten &lt;- df_descriptive %&gt;%
   ungroup() %&gt;%
   slice(1:10) %&gt;%
   select(BORO, NTA, total_incidents, total_population, percent_poverty, percent_education)</code></pre>
-<pre><code>## `summarise()` has grouped output by &#39;BORO&#39;. You
-## can override using the `.groups` argument.</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;BORO&#39;. You can override
+## using the `.groups` argument.</code></pre>
 <pre class="r"><code># Display the table in the desired format
 kable(top_10_nta_overall_staten, digits = 2, caption = &quot;Top 10 NTAs with the Highest Total Shooting Incidents in STATEN ISLAND&quot;)</code></pre>
 <table>
@@ -2173,7 +2173,7 @@ ISLAND</caption>
 <h2>CDTA map for each boro</h2>
 <pre class="r"><code>cdta_shape = st_read(&quot;nycdta2020_24d/nycdta2020.shp&quot;)</code></pre>
 <pre><code>## Reading layer `nycdta2020&#39; from data source 
-##   `/Users/wangmingyin/Desktop/data science 1/Final_website/nycdta2020_24d/nycdta2020.shp&#39; 
+##   `D:\Rproject\ZebangZHANGstat.github.io\nycdta2020_24d\nycdta2020.shp&#39; 
 ##   using driver `ESRI Shapefile&#39;
 ## Simple feature collection with 71 features and 8 fields
 ## Geometry type: MULTIPOLYGON
@@ -2214,11 +2214,11 @@ boroughs &lt;- unique(cdta_map_data$BoroName)</code></pre>
     print(plot)  # Move inside the loop
 }</code></pre>
 <p><img src="descriptive_statistics_files/figure-html/unnamed-chunk-23-1.png" width="672" /><img src="descriptive_statistics_files/figure-html/unnamed-chunk-23-2.png" width="672" /></p>
-<pre><code>## Warning: Removed 2 rows containing missing values or
-## values outside the scale range (`geom_text()`).</code></pre>
+<pre><code>## Warning: Removed 2 rows containing missing values or values outside
+## the scale range (`geom_text()`).</code></pre>
 <p><img src="descriptive_statistics_files/figure-html/unnamed-chunk-23-3.png" width="672" /><img src="descriptive_statistics_files/figure-html/unnamed-chunk-23-4.png" width="672" /></p>
-<pre><code>## Warning: Removed 1 row containing missing values or
-## values outside the scale range (`geom_text()`).</code></pre>
+<pre><code>## Warning: Removed 1 row containing missing values or values outside the
+## scale range (`geom_text()`).</code></pre>
 <p><img src="descriptive_statistics_files/figure-html/unnamed-chunk-23-5.png" width="672" /></p>
 </div>
 </div>

@@ -376,9 +376,8 @@ div.tocify {
 </div>
 
 
-<pre class="r"><code>library(sf)</code></pre>
-<pre><code>## Warning: package &#39;sf&#39; was built under R version 4.4.2</code></pre>
-<pre class="r"><code>library(dplyr)
+<pre class="r"><code>library(sf)
+library(dplyr)
 library(readr)
 library(stringr)
 library(lubridate)
@@ -664,8 +663,8 @@ boro_population &lt;- df_education %&gt;%
   group_by(BORO, Year) %&gt;%
   summarise(total_population_boro = sum(Total_population, na.rm = TRUE)) %&gt;%
   ungroup()</code></pre>
-<pre><code>## `summarise()` has grouped output by &#39;BORO&#39;. You can override using the
-## `.groups` argument.</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;BORO&#39;. You can override
+## using the `.groups` argument.</code></pre>
 <pre class="r"><code>df_education &lt;- df_education %&gt;%
   left_join(boro_population, by = c(&quot;BORO&quot;, &quot;Year&quot;)) %&gt;%
   group_by(BORO, Year) %&gt;%
