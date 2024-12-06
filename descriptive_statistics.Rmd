@@ -595,7 +595,7 @@ for (b in boroughs) {
         filter(BoroName == b)
     plot <- ggplot(data = borough_data) +
         geom_sf(aes(fill = Number_of_Incidents), color = "black") +
-      geom_sf_text(aes(label = Number_of_Incidents), size = 3, color = "white") +  # Add labels+
+      geom_sf_text(aes(label = Number_of_Incidents), size = 3, color = "white") +  # Add labels
         scale_fill_gradientn(
       colors = c("blue", "green", "yellow", "red"), # Custom color scale
       name = "Number of Incidents"
@@ -607,7 +607,7 @@ for (b in boroughs) {
             y = "Latitude"
         ) +
         theme_minimal()
-    print(plot)  # Move inside the loop
+    print(plot) 
 }
 ```
 
