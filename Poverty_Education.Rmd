@@ -1,5 +1,5 @@
 ---
-title: "Poverty/Education VS Incidence Rate"
+title: "Incidence Rate VS Poverty/Education"
 date: "2024-12-02"
 output: 
   html_document:
@@ -201,7 +201,7 @@ renderPlotly({
           type = "scatter",
           mode = "markers",
           text = ~paste("Neighborhood: ", NTA, "<br>Borough: ", neighbourhood_group, 
-                        "<br>% Below Poverty Line: ", Percent_education, 
+                        "<br>% graduated HS: ", Percent_education, 
                         "<br>Incident Rate: ", incident_rate_by_year_nta)) |>
      layout(title = paste("Percent graduated high school and Incident Rate in", input[["borough_choice"]]),
            xaxis = list(title = 'Percentage of People graduated in high school'),
