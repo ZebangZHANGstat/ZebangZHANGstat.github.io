@@ -5,10 +5,10 @@ navbar:
   right:
     - text: "Distribution"
       href: descriptive_statistics.html
-    - text: "Sociodemographic"
-      href: Poverty.html 
     - text: "Distribution on the Map"
       href: boro_nta.html
+    - text: "Sociodemographic"
+      href: https://zz3309.shinyapps.io/poverty_education/
     - text: "Shiny App"
       href: https://zz3309.shinyapps.io/nyc_shooting_incident_shiny_dashboard/
     - icon: fa-envelope fa-lg
