@@ -75,7 +75,7 @@ plot_ly(data = incidents_filtered,
 
 * is there [association](Poverty_Education.html) between incident rate and economic-education condition?
 
-* see some more flexible [plots](NYC Shooting Incident Shiny Dashboard.Rmd)!
+* see some more flexible [plots](https://zz3309.shinyapps.io/nyc_shooting_incident_shiny_dashboard/)!
 
 ## Screen cast 
 

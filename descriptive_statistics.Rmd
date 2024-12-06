@@ -1,5 +1,5 @@
 ---
-title: "descriptive_statistics"
+title: "Spatial and Temoral Patterns of NYC Shooting Incident"
 output: html_document
 date: "2024-12-03"
 ---
@@ -31,7 +31,7 @@ df_descriptive=read_csv("data_final.csv")
 data_final <- read_csv("data_final.csv")
 ```
 
-## Plots that are related to Time
+## Time-Based Exploratory Data Analysis
 
 ### Shooting Incidents by Year in NYC
 ```{r}
@@ -109,7 +109,9 @@ ggplot(sky_dark_counts, aes(x = Sky_Is_Dark, y = total_incidents, fill = Sky_Is_
 
 The number of shooting incidents when the sky was dark is significantly higher than when it was bright. This might indicate that shootings are more likely to occur during nighttime or low visibility conditions. The higher number of incidents during dark conditions could be due to factors such as reduced visibility, higher activity at night, or fewer people around, making it easier for incidents to occur undetected.
 
-## EDA sorted by neighborhood
+## EDA by NTA
+
+Exploratory Data Analysis by Neighborhood Tabulation Area
 
 ### Table showing Top 10 NTAs with the Highest Total Shooting Incidents Number (2017-2023)
 
@@ -225,7 +227,9 @@ ggplot(df_descriptive %>% filter(!is.na(VIC_AGE_GROUP)& VIC_AGE_GROUP != 1022), 
 
 The 25-44 age group has the highest number of victims, significantly more than any other group. The 18-24 age group also shows a considerable number of victims, while the <18 and 45-64 age groups have notably fewer victims. The 65+ age group has the least number of victims.
 
-## EDA sorted by NYC BOROs
+## EDA by NYC BOROs
+
+Exploratory Data Analysis by NYC Borough
 
 ### Process of data manipulation
 ```{r, include=FALSE}
@@ -496,7 +500,9 @@ top_10_nta_incident_rate_staten <- top_10_incident_rate_staten %>%
 kable(top_10_nta_incident_rate_staten, digits = 6, caption = "Top 10 NTAs with the Highest Annual Incident Rate in STATEN ISLAND")
 ```
 
-## EDA sorted by NYC CDTAs
+## EDA by NYC CDTAs
+
+Exploratory Data Analysis by NYC CDTAs
 
 ### Process of data manipulation
 ```{r}
