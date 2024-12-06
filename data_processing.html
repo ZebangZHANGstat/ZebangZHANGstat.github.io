@@ -440,9 +440,42 @@ href="https://a816-dohbesp.nyc.gov/IndicatorPublic/data-explorer/economic-condit
 </div>
 </div>
 </div>
-<div id="this-part-focus-on-data-cleaning-tidying-and-merging."
-class="section level1">
-<h1>This part focus on data cleaning, tidying and merging.</h1>
+<div id="data-processing" class="section level1">
+<h1>Data processing</h1>
+<p>The original <a
+href="https://data.cityofnewyork.us/Public-Safety/NYPD-Shooting-Incident-Data-Historic-/833y-fsy8/about_data">data</a>
+only consists of some basic information and doesn’t show NTA, CDTA,
+neighborhood information of each incident, so we added these information
+to the original data base on the coordinate of each incident, we also
+add some demographic information: population, education level, poverty
+level, .etc to the data.</p>
+<p>Here’s how we add the information base on all the data we have:</p>
+<ul>
+<li><p>enrich NYC shooting incident data with neighborhood-level
+information by performing spatial operations, converts the shooting data
+into a spatial format, joins it with neighborhood boundaries, and adds
+additional neighborhood attributes for deeper spatial analysis.</p></li>
+<li><p>enrich NYC shooting incident data with neighborhood-level
+information by performing spatial operations, converts the shooting data
+into a spatial format, joins it with neighborhood boundaries (both 2020
+and 2010 shapefiles), and adds additional neighborhood attributes for
+deeper spatial analysis.</p></li>
+<li><p>using the <code>holidayNYSE()</code> function to determine which
+dates are public holidays</p></li>
+<li><p>calculates dawn and dusk times for each unique date in the
+dataset. Using NYC’s coordinates (<code>latitude</code> and
+<code>longitude</code>), the <code>getSunlightTimes()</code> function
+generates dawn and dusk times for each day</p></li>
+<li><p>reads in population data from an Excel file, filters relevant
+rows, selects specific columns, and merges this population data with the
+original dataset.</p></li>
+<li><p>filters the poverty and education data for the relevant time
+period (2017-21) and geographic type (<code>NTA2020</code>), selects
+specific columns, and merges this poverty data with the shooting
+incident dataset.</p></li>
+<li><p>calculates shooting incident rates for both Neighborhood
+Tabulation Areas (NTAs) and boroughs by year.</p></li>
+</ul>
 <div id="adding-neighborhood-information-to-the-shooting-dataset"
 class="section level2">
 <h2>adding neighborhood information to the shooting dataset</h2>
@@ -495,6 +528,9 @@ neighborhoods_csv = read_csv(&quot;neighbourhoods.csv&quot;)
 # Merge additional attributes if necessary
 df = df %&gt;%
   left_join(neighborhoods_csv, by = c(&quot;Neighborhood&quot; = &quot;neighbourhood&quot;))</code></pre>
+<p>converts the shooting data into a spatial format, joins it with
+neighborhood boundaries, and adds additional neighborhood attributes for
+deeper spatial analysis.</p>
 </div>
 <div id="add-nta-data" class="section level2">
 <h2>add nta data</h2>
@@ -549,6 +585,9 @@ df_joined &lt;- st_join(df_sf, neighborhoods_2010, left = TRUE)
 
 # Add neighborhood information to your original data frame
 df$NTA_2010 &lt;- df_joined$NTAName  # Adjust based on actual column name</code></pre>
+<p>converts the shooting data into a spatial format, joins it with
+neighborhood boundaries (both 2020 and 2010 shapefiles), and adds
+additional neighborhood attributes for deeper spatial analysis.</p>
 </div>
 <div id="add-time-information" class="section level2">
 <h2>add time information</h2>
@@ -574,6 +613,12 @@ df = df %&gt;%
     Year = year(OCCUR_DATE),
     Month = month(OCCUR_DATE)
   )</code></pre>
+<p>The code handles holidays by using the <code>holidayNYSE()</code>
+function to determine which dates are public holidays. A new column
+(<code>Is_Holiday</code>) is added to indicate if each incident occurred
+on a holiday. The dataset is also enriched by extracting year and month
+information from the <code>OCCUR_DATETIME</code> to facilitate temporal
+trend analysis.</p>
 </div>
 <div
 id="decide-whether-the-sky-is-dark-at-the-shooting-time-using-the-dawn-and-dusk-time"
@@ -615,6 +660,13 @@ df &lt;- df %&gt;%
   )
 df &lt;- df %&gt;%
   select(-DATE, -dawn, -dusk)</code></pre>
+<p>The code calculates dawn and dusk times for each unique date in the
+dataset. Using NYC’s coordinates (<code>latitude</code> and
+<code>longitude</code>), the <code>getSunlightTimes()</code> function
+generates dawn and dusk times for each day, which are then merged with
+the original dataset. A new column (<code>Sky_Is_Dark</code>) is added
+to indicate whether the shooting incident occurred during dark
+conditions, defined as before dawn or after dusk.</p>
 </div>
 </div>
 <div id="adding-total-population-data-of-each-nta"
@@ -642,6 +694,15 @@ df &lt;- df |&gt;
       NTAType == 5 ~ &quot;Rikers Island&quot;,
       is.na(NTAType) ~ &quot;Unknown&quot;)
   )</code></pre>
+<p>reads population data from an Excel file
+(<code>nyc_detailed-race-and-ethnicity-data_2020_core-geographies.xlsx</code>).
+The data is filtered to include relevant rows for specific neighborhoods
+and selects columns such as <code>GeoName</code>, <code>NTAType</code>,
+and <code>Pop</code>. After renaming the <code>Pop</code> column to
+<code>Total_population</code>, this data is merged with the original
+dataset (<code>df</code>). The <code>NTAType</code> values are mapped to
+descriptive names like “Residential”, “Park”, or “Airport” to better
+understand the types of neighborhoods involved.</p>
 </div>
 <div id="adding-cdta-data" class="section level2">
 <h2>adding cdta data</h2>
@@ -666,6 +727,7 @@ df_joined &lt;- st_join(df_sf, cdta, left = TRUE)
 df$CDTA &lt;- df_joined$CDTA2020
 
 df$CDTA &lt;- gsub(&quot;([A-Z]{2})(\\d{2})&quot;, &quot;\\1 \\2&quot;, df$CDTA)</code></pre>
+<p>Similar to adding NTA data</p>
 </div>
 <div id="add-poverty" class="section level2">
 <h2>add poverty</h2>
@@ -682,6 +744,9 @@ df_poverty &lt;- left_join(df, neighborhood_poverty_selected, by = c(&quot;NTA&q
 # Rename columns after merging
 df_poverty &lt;- df_poverty %&gt;% 
   rename(Number_poverty = Number, Percent_poverty = Percent)</code></pre>
+<p>filters the poverty data for the relevant time period (2017-21) and
+geographic type (<code>NTA2020</code>), selects specific columns, and
+merges this poverty data with the shooting incident dataset.</p>
 </div>
 <div id="add-education" class="section level2">
 <h2>add education</h2>
@@ -702,6 +767,9 @@ df_education$OCCUR_DATE &lt;- as.Date(df_education$OCCUR_DATE, format = &quot;%Y
 # Filter the incidents that happened between 2017 and 2023
 df_education &lt;- df_education %&gt;% 
   filter(OCCUR_DATE &gt;= as.Date(&quot;2017-01-01&quot;) &amp; OCCUR_DATE &lt;= as.Date(&quot;2023-12-31&quot;))</code></pre>
+<p>filters the education data for the relevant time period (2017-21) and
+geographic type (<code>NTA2020</code>), selects specific columns, and
+merges this poverty data with the shooting incident dataset.</p>
 </div>
 <div id="compute-incident-rate" class="section level2">
 <h2>compute incident rate</h2>
@@ -729,6 +797,13 @@ df_education &lt;- df_education %&gt;%
   rename(Total_population_nta = Total_population)
 
 write.csv(df_education, &quot;data_final.csv&quot;, row.names = FALSE)</code></pre>
+<p>calculates shooting incident rates for both Neighborhood Tabulation
+Areas (NTAs) and boroughs by year. For each NTA, the incident rate is
+calculated as the number of incidents per total population
+(<code>incident_rate_by_year_nta</code>). Similarly, the total
+population for each borough is calculated, and the shooting incident
+rate for each borough is computed
+(<code>incident_rate_by_year_boro</code>).</p>
 </div>
 </div>
 
