@@ -124,7 +124,7 @@ top_10_nta_overall <- df_descriptive %>%
   arrange(desc(total_incidents)) %>%
   ungroup() %>%
   slice(1:10) %>%
-  select(BORO, NTA, total_incidents, total_population, percent_poverty, percent_education)
+  select(NTA, BORO, total_incidents, total_population, percent_poverty, percent_education)
 # Display the table in the desired format
 kable(top_10_nta_overall, digits = 2, caption = "Top 10 NTAs with the Highest Total Shooting Incidents (2017-2023)")
 ```
@@ -562,13 +562,10 @@ ggplot(data = cdta_map_data) +
   )
 ```
 
-<<<<<<< HEAD
-### Number of Incidents counted by CDTAs in each Boroughs from 2017 to 2023
-=======
 The map shows NYC CDTA incidents (2017–2023) using a gradient from light blue (fewer incidents) to dark green (more incidents), with counts labeled on each district. Dark green areas highlight hotspots, likely in densely populated regions, while lighter blue areas, like Staten Island, show fewer incidents. This visualization helps identify trends and prioritize safety efforts.
 
 ### Plots of CDTA Incidents in each Borough from 2017 to 2023
->>>>>>> 766b2c5de93dd594cc28571761dc89d52450c092
+
 ```{r}
 boroughs <- unique(cdta_map_data$BoroName)
 for (b in boroughs) {
