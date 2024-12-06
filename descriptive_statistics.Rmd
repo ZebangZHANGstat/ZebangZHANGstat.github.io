@@ -496,7 +496,7 @@ top_10_nta_incident_rate_staten <- top_10_incident_rate_staten %>%
 kable(top_10_nta_incident_rate_staten, digits = 6, caption = "Top 10 NTAs with the Highest Annual Incident Rate in STATEN ISLAND")
 ```
 
-## Plot Total Number of Incidents Across NYC CDTAs from 2017 to 2023
+## EDA sorted by NYC CDTAs
 
 ### Process of data manipulation
 ```{r}
@@ -550,8 +550,7 @@ ggplot(data = cdta_map_data) +
   ) +
   labs(
     title = "Total Number of Incidents Across NYC CDTAs from 2017 to 2023",
-    subtitle = "Incidents grouped by range (0-600, 120 breaks)",
-    caption = "Data Source: Your dataset"
+    subtitle = "Incidents grouped by range (0-600, 120 breaks)"
   ) +
   theme_minimal() +
   theme(

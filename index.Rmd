@@ -60,8 +60,8 @@ plot_ly(data = incidents_filtered,
     title = "DAY OR NIGHT Incidents in NYC",  # Set the plot title
     mapbox = list(
       style = "carto-positron",      # Map style
-      center = list(lon = -73.94, lat = 40.84),  # Center the map on NYC
-      zoom = 12                      # Set zoom level
+      center = list(lon = -73.92, lat = 40.70),  # Center the map on NYC
+      zoom = 9.5                      # Set zoom level
     ),
     showlegend = TRUE,               # Display the legend
     legend = list(title = list(text = 'Sky Condition'))  # Legend title
