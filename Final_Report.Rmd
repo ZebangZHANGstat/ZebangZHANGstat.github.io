@@ -805,7 +805,7 @@ data_clean %>%
 # Scatter plot for The Bronx
 data_clean |> 
   filter(neighbourhood_group == "Bronx") |>
-  plot_ly(data = _, x = ~Percent_poverty, y = ~incident_rate_by_year_nta, 
+  plot_ly(data = _, x = ~Percent_education, y = ~incident_rate_by_year_nta, 
           color = ~NTA,
           colors = "magma", 
           type = "scatter",
@@ -825,7 +825,7 @@ data_clean |>
 # Scatter plot for Staten Island
 data_clean |> 
   filter(neighbourhood_group == "Staten Island") |>
-  plot_ly(data = _, x = ~Percent_poverty, y = ~incident_rate_by_year_nta, 
+  plot_ly(data = _, x = ~Percent_education, y = ~incident_rate_by_year_nta, 
           color = ~NTA,
           colors = "inferno", 
           type = "scatter",
