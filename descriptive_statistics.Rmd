@@ -1,5 +1,5 @@
 ---
-title: "Spatial and Temoral Patterns of NYC Shooting Incident"
+title: "Distribution of NYC Shooting Incident"
 output: html_document
 date: "2024-12-03"
 ---
@@ -109,7 +109,7 @@ ggplot(sky_dark_counts, aes(x = Sky_Is_Dark, y = total_incidents, fill = Sky_Is_
 
 The number of shooting incidents when the sky was dark is significantly higher than when it was bright. This might indicate that shootings are more likely to occur during nighttime or low visibility conditions. The higher number of incidents during dark conditions could be due to factors such as reduced visibility, higher activity at night, or fewer people around, making it easier for incidents to occur undetected.
 
-## EDA by NTA
+## Geographic EDA by NTA and Borough
 
 Exploratory Data Analysis by Neighborhood Tabulation Area
 
@@ -432,9 +432,8 @@ ggplot(df_descriptive %>% filter(!is.na(VIC_AGE_GROUP)& VIC_AGE_GROUP != 1022), 
 
 The 25-44 age group has the highest number of victims, significantly more than any other group. The 18-24 age group also shows a considerable number of victims, while the <18 and 45-64 age groups have notably fewer victims. The 65+ age group has the least number of victims.
 
-## EDA by NYC BOROs
+## Map of Number of incidents by NYC BOROs
 
-Exploratory Data Analysis by NYC Borough
 
 ### Process of data manipulation
 ```{r, include=FALSE}
@@ -508,9 +507,8 @@ plot
 
 The map shows the total number of incidents across NYC boroughs (2017–2023), with each borough represented by a distinct color. A gradient is used to indicate the magnitude of incidents, with darker shades corresponding to higher counts, ranging from 0 to over 3,000 incidents. Each borough is outlined and filled with its respective color, making it easy to distinguish. The legend on the right identifies the boroughs (Bronx, Brooklyn, Manhattan, Queens, Staten Island) and aligns with the color gradient to show the number of incidents. This visualization highlights geographical disparities in incident frequency across the boroughs, aiding in understanding spatial distribution patterns.
 
-## EDA by NYC CDTAs
+## Map of Number of incidents by NYC CDTAs
 
-Exploratory Data Analysis by NYC CDTAs
 
 ### Process of data manipulation
 ```{r}
@@ -579,7 +577,7 @@ ggplot(data = cdta_map_data) +
 
 The map shows NYC CDTA incidents (2017–2023) using a gradient from light blue (fewer incidents) to dark green (more incidents), with counts labeled on each district. Dark green areas highlight hotspots, likely in densely populated regions, while lighter blue areas, like Staten Island, show fewer incidents. This visualization helps identify trends and prioritize safety efforts.
 
-### Plots of CDTA Incidents in each Borough from 2017 to 2023
+### Map of CDTA Incidents in each Borough from 2017 to 2023
 
 ```{r}
 boroughs <- unique(cdta_map_data$BoroName)
