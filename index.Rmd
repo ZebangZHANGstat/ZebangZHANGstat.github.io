@@ -15,7 +15,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-Welcome to the NYC Shooting Incident Report website. This platform provides a comprehensive [analysis](Final_Report.html) of shooting incidents across New York City from 2017 to 2023. Using data-driven insights, we explore [spatial, temporal](descriptive_statistics.html), [social-economic patterns](Poverty_Education.html) behind these incidents, aiming to enhance public understanding and support policy-making for a safer city. Navigate through our interactive visualizations to understand how factors like neighborhood characteristics, poverty rates, and time of day influence shooting trends across NYC.
+Welcome to the NYC Shooting Incident Report website. This platform provides a comprehensive [analysis](Final_Report.html) of shooting incidents across New York City from 2017 to 2023. Using data-driven insights, we explore [geographic, periodic](descriptive_statistics.html) and [social-economic patterns](Poverty_Education.html) behind these incidents, aiming to enhance public understanding and support policy-making for a safer city. Navigate through our interactive visualizations to understand how factors like neighborhood characteristics, poverty rates, and time of day influence shooting trends across NYC.
 
 
 
@@ -71,11 +71,11 @@ plot_ly(data = incidents_filtered,
 
 ## Explore more trends:
 
-* see the geographical and temporal [distribution](descriptive_statistics.html)
+* see the geographic and periodic [distribution](descriptive_statistics.html)
 
-* is there [association](Poverty_Education.html) between incident rate and economic-education condition?
+* see [association](Poverty_Education.html) between incident rate and economic-education condition?
 
-* see some more flexible [plots](https://zz3309.shinyapps.io/nyc_shooting_incident_shiny_dashboard/)!
+* see some more interactive [plots](https://zz3309.shinyapps.io/nyc_shooting_incident_shiny_dashboard/)!
 
 ## Screen cast 
 

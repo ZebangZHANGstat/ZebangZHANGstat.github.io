@@ -448,21 +448,18 @@ ggplot(year_counts, aes(x = Year, y = Count, group = 1)) +
 The chart shows a stable trend in shooting incidents from 2017 to 2019, followed by a sharp increase in 2020, likely linked to socio-economic factors like the COVID-19 pandemic. Incidents peaked in 2021 and then declined through 2023.
 
 ```{r}
+# Bar chart showing the number of TRUE and FALSE in the Sky_Is_Dark variable
 sky_dark_counts <- df_descriptive %>%
   group_by(Sky_Is_Dark) %>%
   summarise(total_incidents = n())
 
 ggplot(sky_dark_counts, aes(x = Sky_Is_Dark, y = total_incidents, fill = Sky_Is_Dark)) +
   geom_bar(stat = 'identity') +
-  scale_x_discrete(labels = c("FALSE" = "Daytime", "TRUE" = "Nighttime")) + # Update x-axis labels
-  scale_fill_manual(values = c("FALSE" = "skyblue", "TRUE" = "darkblue"),
-                    labels = c("FALSE" = "Daytime", "TRUE" = "Nighttime")) +
-  labs(title = 'Number of Shooting Incidents by time (Daytime vs. Nigttime)',
-       x = 'Time of a day(Daytime vs. Nigttime)',
+  labs(title = 'Number of Shooting Incidents by Sky Condition (Dark vs. Bright)',
+       x = 'Sky Condition (Dark vs. Bright)',
        y = 'Number of Shooting Incidents') +
   theme_minimal()
 ```
-
 The number of shooting incidents when the sky was dark is significantly higher than when it was bright. This might indicate that shootings are more likely to occur during nighttime or low visibility conditions. The higher number of incidents during dark conditions could be due to factors such as reduced visibility, higher activity at night, or fewer people around, making it easier for incidents to occur undetected
 
 ```{r}
@@ -683,7 +680,7 @@ for (b in boroughs) {
         geom_sf(aes(fill = Number_of_Incidents), color = "black") +
       geom_sf_text(aes(label = Number_of_Incidents), size = 3, color = "black") +  # Add labels
         scale_fill_gradientn(
-      colors = c( "green", "yellow", "red"), # Custom color scale
+      colors = c( "skyblue", "green", "yellow", "red"), # Custom color scale
       name = "Number of Incidents"
     ) +
         labs(
@@ -804,7 +801,7 @@ data_clean %>%
 # Scatter plot for The Bronx
 data_clean |> 
   filter(neighbourhood_group == "Bronx") |>
-  plot_ly(data = _, x = ~Percent_education, y = ~incident_rate_by_year_nta, 
+  plot_ly(data = _, x = ~Percent_poverty, y = ~incident_rate_by_year_nta, 
           color = ~NTA,
           colors = "magma", 
           type = "scatter",
@@ -824,7 +821,7 @@ data_clean |>
 # Scatter plot for Staten Island
 data_clean |> 
   filter(neighbourhood_group == "Staten Island") |>
-  plot_ly(data = _, x = ~Percent_education, y = ~incident_rate_by_year_nta, 
+  plot_ly(data = _, x = ~Percent_poverty, y = ~incident_rate_by_year_nta, 
           color = ~NTA,
           colors = "inferno", 
           type = "scatter",
@@ -839,7 +836,9 @@ data_clean |>
 
 ```
 
-* Across all neighborhoods in NYC,there is a negative linear relationship between the percentage of people who graduated from high school (Percent_education) and the incident rate by neighborhood (incident_rate_by_year_nta).(r = -0.2748).
+The correlation coefficient is -0.2748, indicating a negative relationship between the percentage of people who graduated from high school and the incident rate. This means that there is a tendency for higher education levels to be associated with lower incident rates
+
+* Across all neighborhoods in NYC,there is no clear linear trend between high school graduation rates and incident rates in Manhattan.
 * Associations differ by borough.
 * Notably, The Bronx (-0.3996) and Staten Island (-0.6452) show the highest correlations, suggesting that the relationship between percentage of people who graduated from high school and incident rate is stronger in these boroughs.
 

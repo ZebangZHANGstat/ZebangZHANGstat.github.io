@@ -382,9 +382,8 @@ library(readr)
 library(stringr)
 library(lubridate)
 library(timeDate)
-library(suncalc)</code></pre>
-<pre><code>## Warning: package &#39;suncalc&#39; was built under R version 4.4.2</code></pre>
-<pre class="r"><code>library(purrr)
+library(suncalc)
+library(purrr)
 library(readxl)
 library(tidyverse)</code></pre>
 <div id="data-source" class="section level1">
@@ -509,7 +508,7 @@ download.file(
 )
 neighbourhoods = st_read(&quot;neighbourhoods.geojson&quot;)</code></pre>
 <pre><code>## Reading layer `neighbourhoods&#39; from data source 
-##   `D:\Rproject\ZebangZHANGstat.github.io\neighbourhoods.geojson&#39; 
+##   `/Users/wangmingyin/Desktop/data science 1/Final_website/neighbourhoods.geojson&#39; 
 ##   using driver `GeoJSON&#39;
 ## Simple feature collection with 233 features and 2 fields
 ## Geometry type: MULTIPOLYGON
@@ -553,7 +552,7 @@ df_sf &lt;- st_as_sf(df, coords = c(&quot;X_COORD_CD&quot;, &quot;Y_COORD_CD&quo
 # Read neighborhood shapefile
 nta &lt;- st_read(&quot;./data/nynta2020_24d/nynta2020.shp&quot;)</code></pre>
 <pre><code>## Reading layer `nynta2020&#39; from data source 
-##   `D:\Rproject\ZebangZHANGstat.github.io\data\nynta2020_24d\nynta2020.shp&#39; 
+##   `/Users/wangmingyin/Desktop/data science 1/Final_website/data/nynta2020_24d/nynta2020.shp&#39; 
 ##   using driver `ESRI Shapefile&#39;
 ## Simple feature collection with 262 features and 11 fields
 ## Geometry type: MULTIPOLYGON
@@ -580,7 +579,7 @@ df_sf &lt;- st_as_sf(df, coords = c(&quot;X_COORD_CD&quot;, &quot;Y_COORD_CD&quo
 # Read neighborhood shapefile
 neighborhoods_2010 &lt;- st_read(&quot;./data/nynta2010_24d/nynta2010.shp&quot;)</code></pre>
 <pre><code>## Reading layer `nynta2010&#39; from data source 
-##   `D:\Rproject\ZebangZHANGstat.github.io\data\nynta2010_24d\nynta2010.shp&#39; 
+##   `/Users/wangmingyin/Desktop/data science 1/Final_website/data/nynta2010_24d/nynta2010.shp&#39; 
 ##   using driver `ESRI Shapefile&#39;
 ## Simple feature collection with 195 features and 7 fields
 ## Geometry type: MULTIPOLYGON
@@ -723,7 +722,7 @@ df_sf &lt;- st_as_sf(df, coords = c(&quot;X_COORD_CD&quot;, &quot;Y_COORD_CD&quo
 
 cdta &lt;- st_read(&quot;./data/nycdta2020_24d/nycdta2020.shp&quot;)</code></pre>
 <pre><code>## Reading layer `nycdta2020&#39; from data source 
-##   `D:\Rproject\ZebangZHANGstat.github.io\data\nycdta2020_24d\nycdta2020.shp&#39; 
+##   `/Users/wangmingyin/Desktop/data science 1/Final_website/data/nycdta2020_24d/nycdta2020.shp&#39; 
 ##   using driver `ESRI Shapefile&#39;
 ## Simple feature collection with 71 features and 8 fields
 ## Geometry type: MULTIPOLYGON
@@ -794,8 +793,8 @@ boro_population &lt;- df_education %&gt;%
   group_by(BORO, Year) %&gt;%
   summarise(total_population_boro = sum(Total_population, na.rm = TRUE)) %&gt;%
   ungroup()</code></pre>
-<pre><code>## `summarise()` has grouped output by &#39;BORO&#39;. You can override
-## using the `.groups` argument.</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;BORO&#39;. You
+## can override using the `.groups` argument.</code></pre>
 <pre class="r"><code>df_education &lt;- df_education %&gt;%
   left_join(boro_population, by = c(&quot;BORO&quot;, &quot;Year&quot;)) %&gt;%
   group_by(BORO, Year) %&gt;%
