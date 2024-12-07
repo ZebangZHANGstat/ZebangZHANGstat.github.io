@@ -127,7 +127,7 @@ renderPlotly({
 Column {data-width=500}
 -----------------------------------------------------------------------
 
-### NTA Total Incidents by Borough and Year
+### NTA Incident Rate (from highest to lowest) Information by Borough and Year
 
 ```{r}
 renderDataTable({
