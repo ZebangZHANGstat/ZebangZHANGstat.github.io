@@ -448,18 +448,21 @@ ggplot(year_counts, aes(x = Year, y = Count, group = 1)) +
 The chart shows a stable trend in shooting incidents from 2017 to 2019, followed by a sharp increase in 2020, likely linked to socio-economic factors like the COVID-19 pandemic. Incidents peaked in 2021 and then declined through 2023.
 
 ```{r}
-# Bar chart showing the number of TRUE and FALSE in the Sky_Is_Dark variable
 sky_dark_counts <- df_descriptive %>%
   group_by(Sky_Is_Dark) %>%
   summarise(total_incidents = n())
 
 ggplot(sky_dark_counts, aes(x = Sky_Is_Dark, y = total_incidents, fill = Sky_Is_Dark)) +
   geom_bar(stat = 'identity') +
-  labs(title = 'Number of Shooting Incidents by Sky Condition (Dark vs. Bright)',
-       x = 'Sky Condition (Dark vs. Bright)',
+  scale_x_discrete(labels = c("FALSE" = "Daytime", "TRUE" = "Nighttime")) + # Update x-axis labels
+  scale_fill_manual(values = c("FALSE" = "skyblue", "TRUE" = "darkblue"),
+                    labels = c("FALSE" = "Daytime", "TRUE" = "Nighttime")) +
+  labs(title = 'Number of Shooting Incidents by time (Daytime vs. Nigttime)',
+       x = 'Time of a day(Daytime vs. Nigttime)',
        y = 'Number of Shooting Incidents') +
   theme_minimal()
 ```
+
 The number of shooting incidents when the sky was dark is significantly higher than when it was bright. This might indicate that shootings are more likely to occur during nighttime or low visibility conditions. The higher number of incidents during dark conditions could be due to factors such as reduced visibility, higher activity at night, or fewer people around, making it easier for incidents to occur undetected
 
 ```{r}
