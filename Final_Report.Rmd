@@ -27,9 +27,9 @@ data_clean <- read.csv("data_final.csv")
 ```
 
 
-**Project Name:** *Examining Demographic Patterns in NYC Shooting Data*
+**Project Name:** *Exploring NYC Shooting Data*
 
-**Project Members:** Chenhui Yan (CY2772), Zhaokun Lin (ZL3544), Mingyin Wang (AW3693), Zebang Zhang (ZZ3309)
+**Project Members:** Chenhui Yan (cy2772), Zhaokun Lin (zl3544), Mingyin Wang (aw3693), Zebang Zhang (zz3309)
 
 ## Topic
 
