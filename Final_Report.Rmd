@@ -515,6 +515,7 @@ ggplot(victim_summary %>% filter(VIC_SEX == "F"), aes(x = VIC_AGE_GROUP, y = tot
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
+
 The bar charts show the distribution of male and female shooting victims by age group and race in NYC. In both charts, Black victims are the most affected across all age groups, with the highest number of victims in the 18-24 and 25-44 age groups. For males, the 25-44 age group shows a notable peak, while for females, the same age group also has the highest numbers. White Hispanic victims also show considerable numbers, particularly in the 25-44 age group.
 
 ```{r}
@@ -527,6 +528,7 @@ ggplot(df_descriptive %>% filter(!is.na(VIC_AGE_GROUP)& VIC_AGE_GROUP != 1022), 
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
+
 The 25-44 age group has the highest number of victims, significantly more than any other group. The 18-24 age group also shows a considerable number of victims, while the <18 and 45-64 age groups have notably fewer victims. The 65+ age group has the least number of victims.
 
 
