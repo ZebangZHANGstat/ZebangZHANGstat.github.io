@@ -869,3 +869,4 @@ The disparity among boroughs also suggests that local contexts and community-spe
 
 ## Limitations
 While this study provides an initial exploration of shooting patterns and their relationship to sociodemographic factors, there are several limitations. First, the use of correlational analysis means that we cannot establish causation. Furthermore, we may have missed important confounders, such as policing practices or the presence of gang activity, which could influence shooting incidents. Future studies should incorporate these factors and explore causal relationships, possibly using more advanced statistical methods, such as multilevel models or causal inference techniques.
+
