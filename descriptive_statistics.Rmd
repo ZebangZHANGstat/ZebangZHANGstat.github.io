@@ -175,6 +175,211 @@ incident_by_nta_borough <- df_descriptive %>%
 kable(incident_by_nta_borough, caption = "Top 10 NTAs with Total Shooting Incidents in Each Borough (2017-2023)")
 ```
 
+### Top 10 NTAs with the Highest Total Shooting Incidents in each boro & Top 10 NTAs with the Highest Annual Incident Rate in each boro
+
+
+#### MANHATTAN
+
+Table showing Top 10 NTAs with the Highest Total Shooting Incidents (2017-2023) in MANHATTAN
+```{r}
+top_10_nta_overall_manhattan <- df_descriptive %>%
+  filter(BORO == 'MANHATTAN') %>% 
+  group_by(BORO, NTA) %>%
+  summarise(total_incidents = n(),
+            total_population = first(Total_population_nta),
+            percent_poverty = first(Percent_poverty),
+            percent_education = first(Percent_education)) %>%
+  arrange(desc(total_incidents)) %>%
+  ungroup() %>%
+  slice(1:10) %>%
+  select(NTA, total_incidents, total_population, percent_poverty, percent_education)
+# Display the table in the desired format
+kable(top_10_nta_overall_manhattan, digits = 2, caption = "Top 10 NTAs with the Highest Total Shooting Incidents in MANHATTAN (2017-2023)")
+```
+
+Table showing Top 10 NTAs with the Highest Annual Shooting Incident Rate in MANHATTAN
+```{r}
+top_10_incident_rate_manhattan <- df_descriptive %>%
+  distinct(incident_rate_by_year_nta, .keep_all = TRUE) %>%
+  filter(BORO == 'MANHATTAN') %>% 
+  filter(NTAType == 'Residential') %>%
+  arrange(desc(incident_rate_by_year_nta)) %>%
+  slice(1:10)
+
+# Pull information for the Top 10 NTAs
+top_10_nta_incident_rate_manhattan <- top_10_incident_rate_manhattan %>%
+  select(NTA, Year, incident_rate = incident_rate_by_year_nta,
+         total_population = Total_population_nta,
+         percent_poverty = Percent_poverty,
+         percent_education = Percent_education)
+
+# Display the table in the desired format
+kable(top_10_nta_incident_rate_manhattan, digits = 6, caption = "Top 10 NTAs with the Highest Annual Incident Rate in MANHATTAN")
+```
+
+
+#### BROOKLYN
+
+Table showing Top 10 NTAs with the Highest Total Shooting Incidents (2017-2023) in BROOKLYN
+```{r}
+top_10_nta_overall_brooklyn <- df_descriptive %>%
+  filter(BORO == 'BROOKLYN') %>% 
+  group_by(BORO, NTA) %>%
+  summarise(total_incidents = n(),
+            total_population = first(Total_population_nta),
+            percent_poverty = first(Percent_poverty),
+            percent_education = first(Percent_education)) %>%
+  arrange(desc(total_incidents)) %>%
+  ungroup() %>%
+  slice(1:10) %>%
+  select(NTA, total_incidents, total_population, percent_poverty, percent_education)
+# Display the table in the desired format
+kable(top_10_nta_overall_brooklyn, digits = 2, caption = "Top 10 NTAs with the Highest Total Shooting Incidents in BROOKLYN (2017-2023)")
+```
+
+Table showing Top 10 NTAs with the Highest Annual Shooting Incident Rate in BROOKLYN
+```{r}
+top_10_incident_rate_brooklyn <- df_descriptive %>%
+  distinct(incident_rate_by_year_nta, .keep_all = TRUE) %>%
+  filter(BORO == 'BROOKLYN') %>% 
+  filter(NTAType == 'Residential') %>%
+  arrange(desc(incident_rate_by_year_nta)) %>%
+  slice(1:10)
+
+# Pull information for the Top 10 NTAs
+top_10_nta_incident_rate_brooklyn <- top_10_incident_rate_brooklyn %>%
+  select(NTA, Year, incident_rate = incident_rate_by_year_nta,
+         total_population = Total_population_nta,
+         percent_poverty = Percent_poverty,
+         percent_education = Percent_education)
+
+# Display the table in the desired format
+kable(top_10_nta_incident_rate_brooklyn, digits = 6, caption = "Top 10 NTAs with the Annual Highest Incident Rate in BROOKLYN")
+```
+
+
+#### BRONX
+
+Table showing Top 10 NTAs with the Highest Total Shooting Incidents (2017-2023) in BRONX
+```{r}
+top_10_nta_overall_bronx <- df_descriptive %>%
+  filter(BORO == 'BRONX') %>% 
+  group_by(BORO, NTA) %>%
+  summarise(total_incidents = n(),
+            total_population = first(Total_population_nta),
+            percent_poverty = first(Percent_poverty),
+            percent_education = first(Percent_education)) %>%
+  arrange(desc(total_incidents)) %>%
+  ungroup() %>%
+  slice(1:10) %>%
+  select(NTA, total_incidents, total_population, percent_poverty, percent_education)
+# Display the table in the desired format
+kable(top_10_nta_overall_bronx, digits = 2, caption = "Top 10 NTAs with the Highest Total Shooting Incidents in BRONX (2017-2023)")
+```
+
+Table showing Top 10 NTAs with the Highest Annual Shooting Incident Rate in BRONX
+```{r}
+top_10_incident_rate_bronx <- df_descriptive %>%
+  distinct(incident_rate_by_year_nta, .keep_all = TRUE) %>%
+  filter(BORO == 'BRONX') %>% 
+  filter(NTAType == 'Residential') %>%
+  arrange(desc(incident_rate_by_year_nta)) %>%
+  slice(1:10)
+
+# Pull information for the Top 10 NTAs
+top_10_nta_incident_rate_bronx <- top_10_incident_rate_bronx %>%
+  select(NTA, Year, incident_rate = incident_rate_by_year_nta,
+         total_population = Total_population_nta,
+         percent_poverty = Percent_poverty,
+         percent_education = Percent_education)
+
+# Display the table in the desired format
+kable(top_10_nta_incident_rate_bronx, digits = 6, caption = "Top 10 NTAs with the Highest Annual Incident Rate in BRONX")
+```
+
+
+#### QUEENS
+
+Table showing Top 10 NTAs with the Highest Total Shooting Incidents (2017-2023) in QUEENS
+```{r}
+top_10_nta_overall_queens <- df_descriptive %>%
+  filter(BORO == 'QUEENS') %>% 
+  group_by(BORO, NTA) %>%
+  summarise(total_incidents = n(),
+            total_population = first(Total_population_nta),
+            percent_poverty = first(Percent_poverty),
+            percent_education = first(Percent_education)) %>%
+  arrange(desc(total_incidents)) %>%
+  ungroup() %>%
+  slice(1:10) %>%
+  select(NTA, total_incidents, total_population, percent_poverty, percent_education)
+# Display the table in the desired format
+kable(top_10_nta_overall_queens, digits = 2, caption = "Top 10 NTAs with the Highest Total Shooting Incidents in QUEENS (2017-2023)")
+```
+
+
+Table showing Top 10 NTAs with the Highest Annual Shooting Incident Rate in QUEENS
+```{r}
+top_10_incident_rate_queens <- df_descriptive %>%
+  distinct(incident_rate_by_year_nta, .keep_all = TRUE) %>%
+  filter(BORO == 'QUEENS') %>% 
+  filter(NTAType == 'Residential') %>%
+  arrange(desc(incident_rate_by_year_nta)) %>%
+  slice(1:10)
+
+# Pull information for the Top 10 NTAs
+top_10_nta_incident_rate_queens <- top_10_incident_rate_queens %>%
+  select(NTA, Year, incident_rate = incident_rate_by_year_nta,
+         total_population = Total_population_nta,
+         percent_poverty = Percent_poverty,
+         percent_education = Percent_education)
+
+# Display the table in the desired format
+kable(top_10_nta_incident_rate_queens, digits = 6, caption = "Top 10 NTAs with the Highest Annual Incident Rate in QUEENS")
+```
+
+#### STATEN ISLAND
+
+Table showing Top 10 NTAs with the Highest Total Shooting Incidents (2017-2023) in STATEN ISLAND
+```{r}
+top_10_nta_overall_staten <- df_descriptive %>%
+  filter(BORO == 'STATEN ISLAND') %>% 
+  group_by(BORO, NTA) %>%
+  summarise(total_incidents = n(),
+            total_population = first(Total_population_nta),
+            percent_poverty = first(Percent_poverty),
+            percent_education = first(Percent_education)) %>%
+  arrange(desc(total_incidents)) %>%
+  ungroup() %>%
+  slice(1:10) %>%
+  select(NTA, total_incidents, total_population, percent_poverty, percent_education)
+# Display the table in the desired format
+kable(top_10_nta_overall_staten, digits = 2, caption = "Top 10 NTAs with the Highest Total Shooting Incidents in STATEN ISLAND (2017-2023)")
+```
+
+
+Table showing Top 10 NTAs with the Highest Annual Shooting Incident Rate in STATEN ISLAND
+```{r}
+top_10_incident_rate_staten <- df_descriptive %>%
+  distinct(incident_rate_by_year_nta, .keep_all = TRUE) %>%
+  filter(BORO == 'STATEN ISLAND') %>% 
+  filter(NTAType == 'Residential') %>%
+  arrange(desc(incident_rate_by_year_nta)) %>%
+  slice(1:10)
+
+# Pull information for the Top 10 NTAs
+top_10_nta_incident_rate_staten <- top_10_incident_rate_staten %>%
+  select(NTA, Year, incident_rate = incident_rate_by_year_nta,
+         total_population = Total_population_nta,
+         percent_poverty = Percent_poverty,
+         percent_education = Percent_education)
+
+# Display the table in the desired format
+kable(top_10_nta_incident_rate_staten, digits = 6, caption = "Top 10 NTAs with the Highest Annual Incident Rate in STATEN ISLAND")
+```
+
+
+
 ## EDA related to Victims
 
 ### Plot of Description of Male and Female Shooting Victims by Age Group and Race
@@ -303,203 +508,6 @@ plot
 
 The map shows the total number of incidents across NYC boroughs (2017–2023), with each borough represented by a distinct color. A gradient is used to indicate the magnitude of incidents, with darker shades corresponding to higher counts, ranging from 0 to over 3,000 incidents. Each borough is outlined and filled with its respective color, making it easy to distinguish. The legend on the right identifies the boroughs (Bronx, Brooklyn, Manhattan, Queens, Staten Island) and aligns with the color gradient to show the number of incidents. This visualization highlights geographical disparities in incident frequency across the boroughs, aiding in understanding spatial distribution patterns.
 
-### Top 10 NTAs with the Highest Total Shooting Incidents in each boro & Top 10 NTAs with the Highest Annual Incident Rate in each boro
-
-#### MANHATTAN
-
-Table showing Top 10 NTAs with the Highest Total Shooting Incidents (2017-2023) in MANHATTAN
-```{r}
-top_10_nta_overall_manhattan <- df_descriptive %>%
-  filter(BORO == 'MANHATTAN') %>% 
-  group_by(BORO, NTA) %>%
-  summarise(total_incidents = n(),
-            total_population = first(Total_population_nta),
-            percent_poverty = first(Percent_poverty),
-            percent_education = first(Percent_education)) %>%
-  arrange(desc(total_incidents)) %>%
-  ungroup() %>%
-  slice(1:10) %>%
-  select(NTA, total_incidents, total_population, percent_poverty, percent_education)
-# Display the table in the desired format
-kable(top_10_nta_overall_manhattan, digits = 2, caption = "Top 10 NTAs with the Highest Total Shooting Incidents in MANHATTAN (2017-2023)")
-```
-
-Table showing Top 10 NTAs with the Highest Annual Shooting Incident Rate in MANHATTAN
-```{r}
-top_10_incident_rate_manhattan <- df_descriptive %>%
-  distinct(incident_rate_by_year_nta, .keep_all = TRUE) %>%
-  filter(BORO == 'MANHATTAN') %>% 
-  filter(NTAType == 'Residential') %>%
-  arrange(desc(incident_rate_by_year_nta)) %>%
-  slice(1:10)
-
-# Pull information for the Top 10 NTAs
-top_10_nta_incident_rate_manhattan <- top_10_incident_rate_manhattan %>%
-  select(NTA, Year, incident_rate = incident_rate_by_year_nta,
-         total_population = Total_population_nta,
-         percent_poverty = Percent_poverty,
-         percent_education = Percent_education)
-
-# Display the table in the desired format
-kable(top_10_nta_incident_rate_manhattan, digits = 6, caption = "Top 10 NTAs with the Highest Annual Incident Rate in MANHATTAN")
-```
-
-#### BROOKLYN
-
-Table showing Top 10 NTAs with the Highest Total Shooting Incidents (2017-2023) in BROOKLYN
-```{r}
-top_10_nta_overall_brooklyn <- df_descriptive %>%
-  filter(BORO == 'BROOKLYN') %>% 
-  group_by(BORO, NTA) %>%
-  summarise(total_incidents = n(),
-            total_population = first(Total_population_nta),
-            percent_poverty = first(Percent_poverty),
-            percent_education = first(Percent_education)) %>%
-  arrange(desc(total_incidents)) %>%
-  ungroup() %>%
-  slice(1:10) %>%
-  select(NTA, total_incidents, total_population, percent_poverty, percent_education)
-# Display the table in the desired format
-kable(top_10_nta_overall_brooklyn, digits = 2, caption = "Top 10 NTAs with the Highest Total Shooting Incidents in BROOKLYN (2017-2023)")
-```
-
-Table showing Top 10 NTAs with the Highest Annual Shooting Incident Rate in BROOKLYN
-```{r}
-top_10_incident_rate_brooklyn <- df_descriptive %>%
-  distinct(incident_rate_by_year_nta, .keep_all = TRUE) %>%
-  filter(BORO == 'BROOKLYN') %>% 
-  filter(NTAType == 'Residential') %>%
-  arrange(desc(incident_rate_by_year_nta)) %>%
-  slice(1:10)
-
-# Pull information for the Top 10 NTAs
-top_10_nta_incident_rate_brooklyn <- top_10_incident_rate_brooklyn %>%
-  select(NTA, Year, incident_rate = incident_rate_by_year_nta,
-         total_population = Total_population_nta,
-         percent_poverty = Percent_poverty,
-         percent_education = Percent_education)
-
-# Display the table in the desired format
-kable(top_10_nta_incident_rate_brooklyn, digits = 6, caption = "Top 10 NTAs with the Annual Highest Incident Rate in BROOKLYN")
-```
-
-#### BRONX
-
-Table showing Top 10 NTAs with the Highest Total Shooting Incidents (2017-2023) in BRONX
-```{r}
-top_10_nta_overall_bronx <- df_descriptive %>%
-  filter(BORO == 'BRONX') %>% 
-  group_by(BORO, NTA) %>%
-  summarise(total_incidents = n(),
-            total_population = first(Total_population_nta),
-            percent_poverty = first(Percent_poverty),
-            percent_education = first(Percent_education)) %>%
-  arrange(desc(total_incidents)) %>%
-  ungroup() %>%
-  slice(1:10) %>%
-  select(NTA, total_incidents, total_population, percent_poverty, percent_education)
-# Display the table in the desired format
-kable(top_10_nta_overall_bronx, digits = 2, caption = "Top 10 NTAs with the Highest Total Shooting Incidents in BRONX (2017-2023)")
-```
-
-Table showing Top 10 NTAs with the Highest Annual Shooting Incident Rate in BRONX
-```{r}
-top_10_incident_rate_bronx <- df_descriptive %>%
-  distinct(incident_rate_by_year_nta, .keep_all = TRUE) %>%
-  filter(BORO == 'BRONX') %>% 
-  filter(NTAType == 'Residential') %>%
-  arrange(desc(incident_rate_by_year_nta)) %>%
-  slice(1:10)
-
-# Pull information for the Top 10 NTAs
-top_10_nta_incident_rate_bronx <- top_10_incident_rate_bronx %>%
-  select(NTA, Year, incident_rate = incident_rate_by_year_nta,
-         total_population = Total_population_nta,
-         percent_poverty = Percent_poverty,
-         percent_education = Percent_education)
-
-# Display the table in the desired format
-kable(top_10_nta_incident_rate_bronx, digits = 6, caption = "Top 10 NTAs with the Highest Annual Incident Rate in BRONX")
-```
-
-#### QUEENS
-
-Table showing Top 10 NTAs with the Highest Total Shooting Incidents (2017-2023) in QUEENS
-```{r}
-top_10_nta_overall_queens <- df_descriptive %>%
-  filter(BORO == 'QUEENS') %>% 
-  group_by(BORO, NTA) %>%
-  summarise(total_incidents = n(),
-            total_population = first(Total_population_nta),
-            percent_poverty = first(Percent_poverty),
-            percent_education = first(Percent_education)) %>%
-  arrange(desc(total_incidents)) %>%
-  ungroup() %>%
-  slice(1:10) %>%
-  select(NTA, total_incidents, total_population, percent_poverty, percent_education)
-# Display the table in the desired format
-kable(top_10_nta_overall_queens, digits = 2, caption = "Top 10 NTAs with the Highest Total Shooting Incidents in QUEENS (2017-2023)")
-```
-
-Table showing Top 10 NTAs with the Highest Annual Shooting Incident Rate in QUEENS
-```{r}
-top_10_incident_rate_queens <- df_descriptive %>%
-  distinct(incident_rate_by_year_nta, .keep_all = TRUE) %>%
-  filter(BORO == 'QUEENS') %>% 
-  filter(NTAType == 'Residential') %>%
-  arrange(desc(incident_rate_by_year_nta)) %>%
-  slice(1:10)
-
-# Pull information for the Top 10 NTAs
-top_10_nta_incident_rate_queens <- top_10_incident_rate_queens %>%
-  select(NTA, Year, incident_rate = incident_rate_by_year_nta,
-         total_population = Total_population_nta,
-         percent_poverty = Percent_poverty,
-         percent_education = Percent_education)
-
-# Display the table in the desired format
-kable(top_10_nta_incident_rate_queens, digits = 6, caption = "Top 10 NTAs with the Highest Annual Incident Rate in QUEENS")
-```
-
-#### STATEN ISLAND
-
-Table showing Top 10 NTAs with the Highest Total Shooting Incidents (2017-2023) in STATEN ISLAND
-```{r}
-top_10_nta_overall_staten <- df_descriptive %>%
-  filter(BORO == 'STATEN ISLAND') %>% 
-  group_by(BORO, NTA) %>%
-  summarise(total_incidents = n(),
-            total_population = first(Total_population_nta),
-            percent_poverty = first(Percent_poverty),
-            percent_education = first(Percent_education)) %>%
-  arrange(desc(total_incidents)) %>%
-  ungroup() %>%
-  slice(1:10) %>%
-  select(NTA, total_incidents, total_population, percent_poverty, percent_education)
-# Display the table in the desired format
-kable(top_10_nta_overall_staten, digits = 2, caption = "Top 10 NTAs with the Highest Total Shooting Incidents in STATEN ISLAND (2017-2023)")
-```
-
-Table showing Top 10 NTAs with the Highest Annual Shooting Incident Rate in STATEN ISLAND
-```{r}
-top_10_incident_rate_staten <- df_descriptive %>%
-  distinct(incident_rate_by_year_nta, .keep_all = TRUE) %>%
-  filter(BORO == 'STATEN ISLAND') %>% 
-  filter(NTAType == 'Residential') %>%
-  arrange(desc(incident_rate_by_year_nta)) %>%
-  slice(1:10)
-
-# Pull information for the Top 10 NTAs
-top_10_nta_incident_rate_staten <- top_10_incident_rate_staten %>%
-  select(NTA, Year, incident_rate = incident_rate_by_year_nta,
-         total_population = Total_population_nta,
-         percent_poverty = Percent_poverty,
-         percent_education = Percent_education)
-
-# Display the table in the desired format
-kable(top_10_nta_incident_rate_staten, digits = 6, caption = "Top 10 NTAs with the Highest Annual Incident Rate in STATEN ISLAND")
-```
-
 ## EDA by NYC CDTAs
 
 Exploratory Data Analysis by NYC CDTAs
@@ -537,7 +545,7 @@ cdta_map_data <- cdta_map_data %>%
   )
 ```
 
-"QN80" "SI95" "QN84" are NAs. There is no shooting incident in these CDTAs. Assigned these 3 CDTAs with 0 incident.
+"QN80" "SI95" "QN84" are NAs. There is no shooting incident in these CDTAs. Thenm I assigned these 3 CDTAs with 0 incident.
 
 ### Plot of Total Number of Incidents Across NYC CDTAs from 2017 to 2023
 ```{r}
@@ -568,6 +576,7 @@ ggplot(data = cdta_map_data) +
   )
 ```
 
+
 The map shows NYC CDTA incidents (2017–2023) using a gradient from light blue (fewer incidents) to dark green (more incidents), with counts labeled on each district. Dark green areas highlight hotspots, likely in densely populated regions, while lighter blue areas, like Staten Island, show fewer incidents. This visualization helps identify trends and prioritize safety efforts.
 
 ### Plots of CDTA Incidents in each Borough from 2017 to 2023
@@ -581,7 +590,7 @@ for (b in boroughs) {
         geom_sf(aes(fill = Number_of_Incidents), color = "black") +
       geom_sf_text(aes(label = Number_of_Incidents), size = 3, color = "black") +  # Add labels
         scale_fill_gradientn(
-      colors = c( "green", "yellow", "red"), # Custom color scale
+      colors = c("skyblue","green", "yellow", "red"), # Custom color scale
       name = "Number of Incidents"
     ) +
         labs(
@@ -595,3 +604,12 @@ for (b in boroughs) {
 }
 ```
 
+The Bronx demonstrates significant variability in the number of incidents across its CDTAs, with central and southern regions experiencing the highest numbers of incidents, some exceeding 300. This highlights the borough as a hotspot for crime relative to others. Socioeconomic challenges, high population density, or structural inequities could contribute to these trends. Interventions should prioritize these high-incident areas by allocating additional law enforcement resources and community support programs to mitigate the causes of elevated crime levels.
+
+Manhattan shows a relatively low overall number of incidents, except for a few northern neighborhoods, where one CDTA is a clear outlier with incidents surpassing 1200. This disparity suggests a concentration of crime in specific areas rather than borough-wide. The localized nature of the issue could be due to unique socioeconomic pressures or demographic factors in those neighborhoods. Targeted initiatives such as community policing or economic investment in northern Manhattan could help address these localized hotspots.
+
+Queens generally exhibits a safer profile with most CDTAs reporting fewer than 100 incidents. However, one central area stands out with more than 400 incidents, marking it as a concern. The low number of incidents elsewhere reflects the suburban and less dense nature of the borough. Efforts in Queens should focus on analyzing the central hotspot to determine the underlying causes, such as potential economic or social stressors, and implementing programs to improve community safety.
+
+Brooklyn presents a widespread distribution of incidents, with several CDTAs exceeding 500 incidents. The borough shows higher overall numbers compared to Queens and Manhattan, which may be linked to its high population density and mixed socioeconomic profile. The more even distribution of incidents suggests a need for borough-wide interventions rather than focusing on isolated areas. A combination of public safety initiatives, housing improvements, and community programs would be essential for addressing crime across the borough.
+
+Staten Island stands out with the lowest number of incidents among the five boroughs. Most CDTAs report fewer than 50 incidents, with one area as an exception, exceeding 200 incidents. This aligns with Staten Island's suburban and less densely populated character, which likely contributes to its lower crime rates. Maintaining this safety level requires continued focus on community engagement and ensuring sufficient resources are available to address any emerging hotspots.
