@@ -71,13 +71,9 @@ plot_ly(data = incidents_filtered,
 
 ## Explore more trends:
 
-* see the geographic and periodic [distribution](descriptive_statistics.html)
+* see the geographic and periodic [distribution](descriptive_statistics.html)!
 
-<<<<<<< HEAD
-* is there [association](https://zz3309.shinyapps.io/poverty_education/) between incident rate and economic-education condition?
-=======
-* see [association](Poverty_Education.html) between incident rate and economic-education condition?
->>>>>>> 1f4e546f6b67d6a19eeb8d7d6faab7915fae1fe6
+* see [association](https://zz3309.shinyapps.io/poverty_education/) between incident rate and economic-education condition!
 
 * see some more interactive [plots](https://zz3309.shinyapps.io/nyc_shooting_incident_shiny_dashboard/)!
 
