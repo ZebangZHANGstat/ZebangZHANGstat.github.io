@@ -836,9 +836,7 @@ data_clean |>
 
 ```
 
-The correlation coefficient is -0.2748, indicating a negative relationship between the percentage of people who graduated from high school and the incident rate. This means that there is a tendency for higher education levels to be associated with lower incident rates
-
-* Across all neighborhoods in NYC,there is no clear linear trend between high school graduation rates and incident rates in Manhattan.
+* Across all neighborhoods in NYC,there is a negative linear relationship between the percentage of people who graduated from high school (Percent_education) and the incident rate by neighborhood (incident_rate_by_year_nta).(r = -0.2748).
 * Associations differ by borough.
 * Notably, The Bronx (-0.3996) and Staten Island (-0.6452) show the highest correlations, suggesting that the relationship between percentage of people who graduated from high school and incident rate is stronger in these boroughs.
 
