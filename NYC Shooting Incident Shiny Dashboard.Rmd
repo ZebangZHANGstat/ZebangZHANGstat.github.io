@@ -146,4 +146,3 @@ renderDataTable({
     select(NTA, incident_rate, total_incidents, total_population, percent_poverty, percent_education)
 })
 ```
-

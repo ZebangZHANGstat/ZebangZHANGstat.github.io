@@ -605,7 +605,6 @@ plot <- plot %>%
 
 # Display the interactive plot
 plot
-
 ```
 
 The map shows the total number of incidents across NYC boroughs (2017–2023), with each borough represented by a distinct color. A gradient is used to indicate the magnitude of incidents, with darker shades corresponding to higher counts, ranging from 0 to over 3,000 incidents. Each borough is outlined and filled with its respective color, making it easy to distinguish. The legend on the right identifies the boroughs (Bronx, Brooklyn, Manhattan, Queens, Staten Island) and aligns with the color gradient to show the number of incidents. This visualization highlights geographical disparities in incident frequency across the boroughs, aiding in understanding spatial distribution patterns.
@@ -658,8 +657,7 @@ ggplot(data = cdta_map_data) +
   ) +
   labs(
     title = "Total Number of Incidents Across NYC CDTAs from 2017 to 2023",
-    subtitle = "Incidents grouped by range (0-600, 120 breaks)",
-    caption = "Data Source: Your dataset"
+    subtitle = "Incidents grouped by range (0-600, 120 breaks)"
   ) +
   theme_minimal() +
   theme(
@@ -730,7 +728,7 @@ data_clean %>%
                         "<br>% Below Poverty Line: ", Percent_poverty, 
                         "<br>Incident Rate: ", incident_rate_by_year_nta)) %>%
   layout(title = "Percent Below the Poverty Line and Incident Rate in NYC",
-         xaxis = list(title = 'Percentage of People Whose Income is Below the Poverty Line'),
+         xaxis = list(title = 'Percentage of People Below the Poverty Line'),
          yaxis = list(title = 'Incident Rate'),
          legend = list(title = list(text = 'Neighborhood')))
 ```
@@ -747,7 +745,7 @@ data_clean |>
                         "<br>% Below Poverty Line: ", Percent_poverty, 
                         "<br>Incident Rate: ", incident_rate_by_year_nta)) |> 
     layout(title = "Percent Below the Poverty Line and Incident Rate in Brooklyn",
-           xaxis = list(title = 'Percentage of People Whose Income is Below the Poverty Line'),
+           xaxis = list(title = 'Percentage of People Below the Poverty Line'),
            yaxis = list(title = 'Incident Rate'),
            legend = list(title = list(text = 'Neighborhood')))
 
@@ -766,7 +764,7 @@ data_clean |>
                         "<br>% Below Poverty Line: ", Percent_poverty, 
                         "<br>Incident Rate: ", incident_rate_by_year_nta)) |> 
     layout(title = "Percent Below the Poverty Line and Incident Rate in Staten Island",
-           xaxis = list(title = 'Percentage of People Whose Income is Below the Poverty Line'),
+           xaxis = list(title = 'Percentage of People Below the Poverty Line'),
            yaxis = list(title = 'Incident Rate'),
            legend = list(title = list(text = 'Neighborhood')))
 
@@ -871,3 +869,4 @@ The disparity among boroughs also suggests that local contexts and community-spe
 
 ## Limitations
 While this study provides an initial exploration of shooting patterns and their relationship to sociodemographic factors, there are several limitations. First, the use of correlational analysis means that we cannot establish causation. Furthermore, we may have missed important confounders, such as policing practices or the presence of gang activity, which could influence shooting incidents. Future studies should incorporate these factors and explore causal relationships, possibly using more advanced statistical methods, such as multilevel models or causal inference techniques.
+
