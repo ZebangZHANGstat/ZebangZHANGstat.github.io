@@ -362,3 +362,4 @@ write.csv(df_education, "data_final.csv", row.names = FALSE)
 ```
 
 calculates shooting incident rates for both Neighborhood Tabulation Areas (NTAs) and boroughs by year. For each NTA, the incident rate is calculated as the number of incidents per total population (`incident_rate_by_year_nta`). Similarly, the total population for each borough is calculated, and the shooting incident rate for each borough is computed (`incident_rate_by_year_boro`). 
+
