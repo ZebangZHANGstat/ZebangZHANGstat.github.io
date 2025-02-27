@@ -108,6 +108,240 @@ ggplot(sky_dark_counts, aes(x = Sky_Is_Dark, y = total_incidents, fill = Sky_Is_
 
 The number of shooting incidents when the sky was dark is significantly higher than when it was bright. This might indicate that shootings are more likely to occur during nighttime or low visibility conditions. The higher number of incidents during dark conditions could be due to factors such as reduced visibility, higher activity at night, or fewer people around, making it easier for incidents to occur undetected.
 
+
+## EDA related to Victims
+
+### Plot of Description of Male and Female Shooting Victims by Age Group and Race
+
+```{r}
+# Plot: Description of Victims
+victim_summary <- df_descriptive %>%
+  filter(VIC_SEX %in% c("M", "F")) %>%  # Filter out unknown
+  group_by(VIC_SEX, VIC_AGE_GROUP, VIC_RACE) %>%
+  summarise(total_victims = n()) %>%
+  drop_na()
+
+
+# Plotting the description of male victims
+ggplot(victim_summary %>% filter(VIC_SEX == "M"), aes(x = VIC_AGE_GROUP, y = total_victims, fill = VIC_RACE)) +
+  geom_bar(stat = 'identity', position = 'dodge') +
+  labs(title = "Description of Male Shooting Victims by Age Group and Race",
+       x = "Victim Age Group",
+       y = "Number of Victims",
+       fill = "Victim Race") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# Plotting the description of female victims
+ggplot(victim_summary %>% filter(VIC_SEX == "F"), aes(x = VIC_AGE_GROUP, y = total_victims, fill = VIC_RACE)) +
+  geom_bar(stat = 'identity', position = 'dodge') +
+  labs(title = "Description of Female Shooting Victims by Age Group and Race",
+       x = "Victim Age Group",
+       y = "Number of Victims",
+       fill = "Victim Race") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+```
+
+The bar charts show the distribution of male and female shooting victims by age group and race in NYC. In both charts, Black victims are the most affected across all age groups, with the highest number of victims in the 18-24 and 25-44 age groups. For males, the 25-44 age group shows a notable peak, while for females, the same age group also has the highest numbers. White Hispanic victims also show considerable numbers, particularly in the 25-44 age group.
+
+### Plot: Bar chart showing all victim's age
+
+```{r}
+# Plot: Bar chart showing victim's age
+ggplot(df_descriptive %>% filter(!is.na(VIC_AGE_GROUP)& VIC_AGE_GROUP != 1022), aes(x = VIC_AGE_GROUP)) +
+  geom_bar(fill = "steelblue") +
+  labs(title = "Bar Chart of Victim's Age",
+       x = "Victim Age Group",
+       y = "Count of Victims") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+The 25-44 age group has the highest number of victims, significantly more than any other group. The 18-24 age group also shows a considerable number of victims, while the <18 and 45-64 age groups have notably fewer victims. The 65+ age group has the least number of victims.
+
+
+## Map of Number of incidents by NYC BOROs
+
+### Process of data manipulation
+```{r}
+# Load dataset
+
+cdta_shape = st_read("nycdta2020_24d/nycdta2020.shp")
+boro_shape = st_read("Borough Boundaries/geo_export_391a75ed-0ae4-4c88-8c30-3588c75bd01e.shp")
+
+# Count the boro incident
+boro_incident_counts <- data_final %>%
+  group_by(BORO) %>%
+  summarise(Number_of_Incidents = n(), .groups = "drop")  %>%
+  mutate(BORO = tolower(BORO) )
+
+# Lowercase the boro in boro_shape
+boro_shape = boro_shape %>%
+  mutate(boro_name = tolower(boro_name))
+ 
+
+# Merge spatial data with incident counts
+boro_map_data <- boro_shape %>%
+  left_join(boro_incident_counts, by = c("boro_name" = "BORO"))
+
+```
+
+### Plot of Total Number of Incidents Across NYC BOROs (2017-2023)
+
+```{r}
+data_final <- read_csv("data_final.csv")
+boro_map_data <- boro_map_data %>%
+  mutate(
+    hover_text = paste("Borough:", boro_name, "<br>Total Incidents:", Number_of_Incidents)
+  )
+
+# Create the interactive plot with click functionality
+plot <- plot_ly(
+  data = boro_map_data,
+  type = "scattermapbox",
+  split = ~boro_name,  # Separate polygons by boroughs
+  color = ~Number_of_Incidents,  # Color based on the number of incidents
+  colors = "viridis",  # Use a color scale
+  text = ~hover_text,  # Display hover text
+  hoverinfo = "text",
+  marker = list(size = 8, opacity = 0.7)
+) %>%
+  layout(
+    title = "Total Number of Incidents Across NYC BOROs (2017-2023)",
+    mapbox = list(
+      style = "carto-positron",  # Base map style
+      center = list(lon = -74.00, lat = 40.7128),  # Center map on NYC
+      zoom = 9
+    )
+  )
+
+# Add click functionality to display the borough name and number of incidents
+plot <- plot %>%
+  event_register("plotly_click") %>%
+  htmlwidgets::onRender("
+    function(el, x) {
+      el.on('plotly_click', function(d) {
+        var point = d.points[0];
+        var text = point.text;
+        alert('You clicked on: ' + text);
+      });
+    }
+  ")
+
+# Display the interactive plot
+plot
+```
+
+The map shows the total number of incidents across NYC boroughs (2017–2023), with each borough represented by a distinct color. A gradient is used to indicate the magnitude of incidents, with brighter shades corresponding to higher counts, ranging from 0 to over 3,000 incidents. Each borough is outlined and filled with its respective color, making it easy to distinguish. The legend on the right identifies the boroughs (Bronx, Brooklyn, Manhattan, Queens, Staten Island) and aligns with the color gradient to show the number of incidents. This visualization highlights geographical disparities in incident frequency across the boroughs, aiding in understanding spatial distribution patterns.
+
+
+## Map of Number of incidents by NYC CDTAs
+
+### Process of data manipulation
+```{r}
+## There is space between letter and number in CDTA, delete the space below
+data_final$CDTA <- gsub(" ", "", data_final$CDTA)
+
+cdta_incident_counts <- data_final %>%
+  group_by(CDTA) %>%
+  summarise(Number_of_Incidents = n(), .groups = "drop")
+
+# Remove any trailing spaces or mismatches in CDTA identifiers:
+cdta_shape$CDTA2020 <- gsub(" ", "", cdta_shape$CDTA2020)
+data_final$CDTA <- gsub(" ", "", data_final$CDTA)
+
+# Identify Missing Matches
+unmatched_cdta <- setdiff(cdta_shape$CDTA2020, data_final$CDTA)
+
+#Re-Merge the Data
+cdta_map_data <- cdta_shape %>%
+  left_join(cdta_incident_counts, by = c("CDTA2020" = "CDTA"))
+
+# Update NA Handling
+cdta_map_data <- cdta_map_data %>%
+  mutate(
+    Number_of_Incidents = ifelse(is.na(Number_of_Incidents), 0, Number_of_Incidents),
+    Incident_Range = cut(
+      Number_of_Incidents,
+      breaks = seq(0, 600, by = 120), 
+      labels = c("0-120", "121-240", "241-360", "361-480", "481-600"),
+      include.lowest = TRUE
+    )
+  )
+```
+
+"QN80" "SI95" "QN84" are NAs. Therefore, these 3 CDTAs are assigned with 0 incident.
+
+### Plot of Total Number of Incidents Across NYC CDTAs from 2017 to 2023
+```{r}
+ggplot(data = cdta_map_data) +
+  geom_sf(aes(fill = Incident_Range), color = "white", size = 0.2) +
+ geom_sf_text(aes(label = Number_of_Incidents), size = 3, color = "black") +  # Add labels+
+  scale_fill_manual(
+    values = c(
+      "0-120" = "#b2e2e2",
+      "121-240" = "skyblue",
+      "241-360" = "#66c2a4",
+      "361-480" = "#2ca25f",
+      "481-600" = "#006d2c"
+    ),
+    name = "Number of Incidents"
+  ) +
+  labs(
+    title = "Total Number of Incidents Across NYC CDTAs from 2017 to 2023",
+    subtitle = "Incidents grouped by range (0-600, 120 breaks)"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text = element_blank(),
+    axis.ticks = element_blank(),
+    panel.grid = element_blank(),
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank()
+  )
+```
+
+
+The map shows NYC CDTA incidents (2017–2023) using a gradient from light blue (fewer incidents) to dark green (more incidents), with counts labeled on each district. Dark green areas highlight hotspots, likely in densely populated regions, while lighter blue areas, like Staten Island, show fewer incidents. This visualization helps identify trends and prioritize safety efforts.
+
+### Map of CDTA Incidents in each Borough from 2017 to 2023
+
+```{r}
+boroughs <- unique(cdta_map_data$BoroName)
+for (b in boroughs) {
+    borough_data <- cdta_map_data %>%
+        filter(BoroName == b)
+    plot <- ggplot(data = borough_data) +
+        geom_sf(aes(fill = Number_of_Incidents), color = "black") +
+      geom_sf_text(aes(label = Number_of_Incidents), size = 3, color = "black") +  # Add labels
+        scale_fill_gradientn(
+      colors = c("skyblue","green", "yellow", "red"), # Custom color scale
+      name = "Number of Incidents"
+    ) +
+        labs(
+            title = paste("CDTA Incidents in", b),
+            subtitle = "2017 to 2023",
+            x = "Longitude",
+            y = "Latitude"
+        ) +
+        theme_minimal()
+    print(plot) 
+}
+```
+
+The Bronx demonstrates significant variability in the number of incidents across its CDTAs, with central and southern regions experiencing the highest numbers of incidents, some exceeding 300. This highlights the borough as a hotspot for crime relative to others. Socioeconomic challenges, high population density, or structural inequities could contribute to these trends. Interventions should prioritize these high-incident areas by allocating additional law enforcement resources and community support programs to mitigate the causes of elevated crime levels.
+
+Manhattan shows a relatively low overall number of incidents, except for a few northern neighborhoods, where one CDTA is a clear outlier with incidents surpassing 1200. This disparity suggests a concentration of crime in specific areas rather than borough-wide. The localized nature of the issue could be due to unique socioeconomic pressures or demographic factors in those neighborhoods. Targeted initiatives such as community policing or economic investment in northern Manhattan could help address these localized hotspots.
+
+Queens generally exhibits a safer profile with most CDTAs reporting fewer than 100 incidents. However, one central area stands out with more than 400 incidents, marking it as a concern. The low number of incidents elsewhere reflects the suburban and less dense nature of the borough. Efforts in Queens should focus on analyzing the central hotspot to determine the underlying causes, such as potential economic or social stressors, and implementing programs to improve community safety.
+
+Brooklyn presents a widespread distribution of incidents, with several CDTAs exceeding 500 incidents. The borough shows higher overall numbers compared to Queens and Manhattan, which may be linked to its high population density and mixed socioeconomic profile. The more even distribution of incidents suggests a need for borough-wide interventions rather than focusing on isolated areas. A combination of public safety initiatives, housing improvements, and community programs would be essential for addressing crime across the borough.
+
+Staten Island stands out with the lowest number of incidents among the five boroughs. Most CDTAs report fewer than 50 incidents, with one area as an exception, exceeding 200 incidents. This aligns with Staten Island's suburban and less densely populated character, which likely contributes to its lower crime rates. Maintaining this safety level requires continued focus on community engagement and ensuring sufficient resources are available to address any emerging hotspots.
+
+
 ## Geographic EDA by NTA and Borough
 
 Exploratory Data Analysis by Neighborhood Tabulation Area
@@ -377,236 +611,3 @@ top_10_nta_incident_rate_staten <- top_10_incident_rate_staten %>%
 kable(top_10_nta_incident_rate_staten, digits = 6, caption = "Top 10 NTAs with the Highest Annual Incident Rate in STATEN ISLAND")
 ```
 
-
-
-## EDA related to Victims
-
-### Plot of Description of Male and Female Shooting Victims by Age Group and Race
-
-```{r}
-# Plot: Description of Victims
-victim_summary <- df_descriptive %>%
-  filter(VIC_SEX %in% c("M", "F")) %>%  # Filter out unknown
-  group_by(VIC_SEX, VIC_AGE_GROUP, VIC_RACE) %>%
-  summarise(total_victims = n()) %>%
-  drop_na()
-
-
-# Plotting the description of male victims
-ggplot(victim_summary %>% filter(VIC_SEX == "M"), aes(x = VIC_AGE_GROUP, y = total_victims, fill = VIC_RACE)) +
-  geom_bar(stat = 'identity', position = 'dodge') +
-  labs(title = "Description of Male Shooting Victims by Age Group and Race",
-       x = "Victim Age Group",
-       y = "Number of Victims",
-       fill = "Victim Race") +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-
-# Plotting the description of female victims
-ggplot(victim_summary %>% filter(VIC_SEX == "F"), aes(x = VIC_AGE_GROUP, y = total_victims, fill = VIC_RACE)) +
-  geom_bar(stat = 'identity', position = 'dodge') +
-  labs(title = "Description of Female Shooting Victims by Age Group and Race",
-       x = "Victim Age Group",
-       y = "Number of Victims",
-       fill = "Victim Race") +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-
-```
-
-The bar charts show the distribution of male and female shooting victims by age group and race in NYC. In both charts, Black victims are the most affected across all age groups, with the highest number of victims in the 18-24 and 25-44 age groups. For males, the 25-44 age group shows a notable peak, while for females, the same age group also has the highest numbers. White Hispanic victims also show considerable numbers, particularly in the 25-44 age group.
-
-### Plot: Bar chart showing all victim's age
-
-```{r}
-# Plot: Bar chart showing victim's age
-ggplot(df_descriptive %>% filter(!is.na(VIC_AGE_GROUP)& VIC_AGE_GROUP != 1022), aes(x = VIC_AGE_GROUP)) +
-  geom_bar(fill = "steelblue") +
-  labs(title = "Bar Chart of Victim's Age",
-       x = "Victim Age Group",
-       y = "Count of Victims") +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-```
-
-The 25-44 age group has the highest number of victims, significantly more than any other group. The 18-24 age group also shows a considerable number of victims, while the <18 and 45-64 age groups have notably fewer victims. The 65+ age group has the least number of victims.
-
-## Map of Number of incidents by NYC BOROs
-
-
-### Process of data manipulation
-```{r, include=FALSE}
-# Load dataset
-
-cdta_shape = st_read("nycdta2020_24d/nycdta2020.shp")
-boro_shape = st_read("Borough Boundaries/geo_export_391a75ed-0ae4-4c88-8c30-3588c75bd01e.shp")
-
-# Count the boro incident
-boro_incident_counts <- data_final %>%
-  group_by(BORO) %>%
-  summarise(Number_of_Incidents = n(), .groups = "drop")  %>%
-  mutate(BORO = tolower(BORO) )
-
-# Lowercase the boro in boro_shape
-boro_shape = boro_shape %>%
-  mutate(boro_name = tolower(boro_name))
- 
-
-# Merge spatial data with incident counts
-boro_map_data <- boro_shape %>%
-  left_join(boro_incident_counts, by = c("boro_name" = "BORO"))
-
-```
-
-### Plot of Total Number of Incidents Across NYC BOROs (2017-2023)
-
-```{r}
-data_final <- read_csv("data_final.csv")
-boro_map_data <- boro_map_data %>%
-  mutate(
-    hover_text = paste("Borough:", boro_name, "<br>Total Incidents:", Number_of_Incidents)
-  )
-
-# Create the interactive plot with click functionality
-plot <- plot_ly(
-  data = boro_map_data,
-  type = "scattermapbox",
-  split = ~boro_name,  # Separate polygons by boroughs
-  color = ~Number_of_Incidents,  # Color based on the number of incidents
-  colors = "viridis",  # Use a color scale
-  text = ~hover_text,  # Display hover text
-  hoverinfo = "text",
-  marker = list(size = 8, opacity = 0.7)
-) %>%
-  layout(
-    title = "Total Number of Incidents Across NYC BOROs (2017-2023)",
-    mapbox = list(
-      style = "carto-positron",  # Base map style
-      center = list(lon = -74.00, lat = 40.7128),  # Center map on NYC
-      zoom = 9
-    )
-  )
-
-# Add click functionality to display the borough name and number of incidents
-plot <- plot %>%
-  event_register("plotly_click") %>%
-  htmlwidgets::onRender("
-    function(el, x) {
-      el.on('plotly_click', function(d) {
-        var point = d.points[0];
-        var text = point.text;
-        alert('You clicked on: ' + text);
-      });
-    }
-  ")
-
-# Display the interactive plot
-plot
-```
-
-The map shows the total number of incidents across NYC boroughs (2017–2023), with each borough represented by a distinct color. A gradient is used to indicate the magnitude of incidents, with brighter shades corresponding to higher counts, ranging from 0 to over 3,000 incidents. Each borough is outlined and filled with its respective color, making it easy to distinguish. The legend on the right identifies the boroughs (Bronx, Brooklyn, Manhattan, Queens, Staten Island) and aligns with the color gradient to show the number of incidents. This visualization highlights geographical disparities in incident frequency across the boroughs, aiding in understanding spatial distribution patterns.
-
-## Map of Number of incidents by NYC CDTAs
-
-
-### Process of data manipulation
-```{r}
-## There is space between letter and number in CDTA, delete the space below
-data_final$CDTA <- gsub(" ", "", data_final$CDTA)
-
-cdta_incident_counts <- data_final %>%
-  group_by(CDTA) %>%
-  summarise(Number_of_Incidents = n(), .groups = "drop")
-
-# Remove any trailing spaces or mismatches in CDTA identifiers:
-cdta_shape$CDTA2020 <- gsub(" ", "", cdta_shape$CDTA2020)
-data_final$CDTA <- gsub(" ", "", data_final$CDTA)
-
-# Identify Missing Matches
-unmatched_cdta <- setdiff(cdta_shape$CDTA2020, data_final$CDTA)
-
-#Re-Merge the Data
-cdta_map_data <- cdta_shape %>%
-  left_join(cdta_incident_counts, by = c("CDTA2020" = "CDTA"))
-
-# Update NA Handling
-cdta_map_data <- cdta_map_data %>%
-  mutate(
-    Number_of_Incidents = ifelse(is.na(Number_of_Incidents), 0, Number_of_Incidents),
-    Incident_Range = cut(
-      Number_of_Incidents,
-      breaks = seq(0, 600, by = 120), 
-      labels = c("0-120", "121-240", "241-360", "361-480", "481-600"),
-      include.lowest = TRUE
-    )
-  )
-```
-
-"QN80" "SI95" "QN84" are NAs. There is no shooting incident in these CDTAs. Thenm I assigned these 3 CDTAs with 0 incident.
-
-### Plot of Total Number of Incidents Across NYC CDTAs from 2017 to 2023
-```{r}
-ggplot(data = cdta_map_data) +
-  geom_sf(aes(fill = Incident_Range), color = "white", size = 0.2) +
- geom_sf_text(aes(label = Number_of_Incidents), size = 3, color = "black") +  # Add labels+
-  scale_fill_manual(
-    values = c(
-      "0-120" = "#b2e2e2",
-      "121-240" = "skyblue",
-      "241-360" = "#66c2a4",
-      "361-480" = "#2ca25f",
-      "481-600" = "#006d2c"
-    ),
-    name = "Number of Incidents"
-  ) +
-  labs(
-    title = "Total Number of Incidents Across NYC CDTAs from 2017 to 2023",
-    subtitle = "Incidents grouped by range (0-600, 120 breaks)"
-  ) +
-  theme_minimal() +
-  theme(
-    axis.text = element_blank(),
-    axis.ticks = element_blank(),
-    panel.grid = element_blank(),
-    axis.title.x = element_blank(),
-    axis.title.y = element_blank()
-  )
-```
-
-
-The map shows NYC CDTA incidents (2017–2023) using a gradient from light blue (fewer incidents) to dark green (more incidents), with counts labeled on each district. Dark green areas highlight hotspots, likely in densely populated regions, while lighter blue areas, like Staten Island, show fewer incidents. This visualization helps identify trends and prioritize safety efforts.
-
-### Map of CDTA Incidents in each Borough from 2017 to 2023
-
-```{r}
-boroughs <- unique(cdta_map_data$BoroName)
-for (b in boroughs) {
-    borough_data <- cdta_map_data %>%
-        filter(BoroName == b)
-    plot <- ggplot(data = borough_data) +
-        geom_sf(aes(fill = Number_of_Incidents), color = "black") +
-      geom_sf_text(aes(label = Number_of_Incidents), size = 3, color = "black") +  # Add labels
-        scale_fill_gradientn(
-      colors = c("skyblue","green", "yellow", "red"), # Custom color scale
-      name = "Number of Incidents"
-    ) +
-        labs(
-            title = paste("CDTA Incidents in", b),
-            subtitle = "2017 to 2023",
-            x = "Longitude",
-            y = "Latitude"
-        ) +
-        theme_minimal()
-    print(plot) 
-}
-```
-
-The Bronx demonstrates significant variability in the number of incidents across its CDTAs, with central and southern regions experiencing the highest numbers of incidents, some exceeding 300. This highlights the borough as a hotspot for crime relative to others. Socioeconomic challenges, high population density, or structural inequities could contribute to these trends. Interventions should prioritize these high-incident areas by allocating additional law enforcement resources and community support programs to mitigate the causes of elevated crime levels.
-
-Manhattan shows a relatively low overall number of incidents, except for a few northern neighborhoods, where one CDTA is a clear outlier with incidents surpassing 1200. This disparity suggests a concentration of crime in specific areas rather than borough-wide. The localized nature of the issue could be due to unique socioeconomic pressures or demographic factors in those neighborhoods. Targeted initiatives such as community policing or economic investment in northern Manhattan could help address these localized hotspots.
-
-Queens generally exhibits a safer profile with most CDTAs reporting fewer than 100 incidents. However, one central area stands out with more than 400 incidents, marking it as a concern. The low number of incidents elsewhere reflects the suburban and less dense nature of the borough. Efforts in Queens should focus on analyzing the central hotspot to determine the underlying causes, such as potential economic or social stressors, and implementing programs to improve community safety.
-
-Brooklyn presents a widespread distribution of incidents, with several CDTAs exceeding 500 incidents. The borough shows higher overall numbers compared to Queens and Manhattan, which may be linked to its high population density and mixed socioeconomic profile. The more even distribution of incidents suggests a need for borough-wide interventions rather than focusing on isolated areas. A combination of public safety initiatives, housing improvements, and community programs would be essential for addressing crime across the borough.
-
-Staten Island stands out with the lowest number of incidents among the five boroughs. Most CDTAs report fewer than 50 incidents, with one area as an exception, exceeding 200 incidents. This aligns with Staten Island's suburban and less densely populated character, which likely contributes to its lower crime rates. Maintaining this safety level requires continued focus on community engagement and ensuring sufficient resources are available to address any emerging hotspots.

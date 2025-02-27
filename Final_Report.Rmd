@@ -29,7 +29,9 @@ data_clean <- read.csv("data_final.csv")
 
 **Project Name:** *Exploring NYC Shooting Data*
 
-**Project Members:** Chenhui Yan (cy2772), Zhaokun Lin (zl3544), Mingyin Wang (aw3693), Zebang Zhang (zz3309)
+**Group Leader:** Zebang Zhang (zz3309)
+
+**Other Members:** Chenhui Yan (cy2772), Zhaokun Lin (zl3544), Mingyin Wang (aw3693)
 
 ## Topic
 
